@@ -1,0 +1,2600 @@
+/* ==========================================================================
+   ENCRE — Design System "Encre & Papier"
+   Esthétique littéraire noble, typographie soignée, zéro cliché IA.
+   ========================================================================== */
+
+:root {
+  /* Typographie */
+  --encre-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --encre-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", system-ui, sans-serif;
+
+  /* Teintes Claires (Papier lin & ivoire) */
+  --encre-fond: #f7f4ee;
+  --encre-surface: #fffdf9;
+  --encre-surface-hover: #f0ece1;
+  --encre-surface-active: #e7e2d5;
+  --encre-texte: #1d1a16;
+  --encre-texte-sec: #686156;
+  --encre-texte-ter: #9b9385;
+  --encre-bordure: #e2dbd0;
+  --encre-bordure-douce: #eee8de;
+  --encre-accent: #b06720;
+  --encre-accent-hover: #945314;
+  --encre-accent-subtil: rgba(176, 103, 32, 0.08);
+
+  /* Couleurs de surlignage (aquarelle douce) */
+  --encre-hl-jaune: #f7d570;
+  --encre-hl-vert: #b0deb9;
+  --encre-hl-lavande: #d3c7f3;
+  --encre-hl-peche: #f7bdae;
+
+  /* HUD & Popovers */
+  --encre-hud-bg: rgba(255, 253, 249, 0.94);
+  --encre-popover-bg: #fffdfa;
+
+  /* Espacements & Rayons */
+  --encre-espace-xs: 4px;
+  --encre-espace-s: 8px;
+  --encre-espace-m: 16px;
+  --encre-espace-l: 24px;
+  --encre-espace-xl: 36px;
+  --encre-rayon-s: 6px;
+  --encre-rayon-m: 10px;
+  --encre-rayon-l: 14px;
+  --encre-rayon-pill: 9999px;
+
+  /* Ombres naturelles */
+  --encre-ombre-douce: 0 1px 3px rgba(29, 26, 22, 0.05), 0 4px 12px rgba(29, 26, 22, 0.06);
+  --encre-ombre-hover: 0 4px 8px rgba(29, 26, 22, 0.08), 0 12px 24px rgba(29, 26, 22, 0.09);
+  --encre-ombre-reliure: inset 4px 0 8px rgba(0, 0, 0, 0.12), inset -1px 0 2px rgba(255, 255, 255, 0.3);
+  --encre-ombre-popover: 0 8px 30px rgba(29, 26, 22, 0.14), 0 2px 8px rgba(29, 26, 22, 0.08);
+  --encre-ombre-tiroir: -10px 0 30px rgba(29, 26, 22, 0.12);
+}
+
+/* Teintes Sombres (Encre minérale chaude, jamais de bleu saturé) */
+[data-theme="sombre"] {
+  --encre-fond: #131210;
+  --encre-surface: #1c1a17;
+  --encre-surface-hover: #26231f;
+  --encre-surface-active: #302c27;
+  --encre-texte: #ece7dd;
+  --encre-texte-sec: #a39b8e;
+  --encre-texte-ter: #6b6459;
+  --encre-bordure: #2f2a24;
+  --encre-bordure-douce: #23201c;
+  --encre-accent: #de994b;
+  --encre-accent-hover: #eaa95e;
+  --encre-accent-subtil: rgba(222, 153, 75, 0.12);
+
+  --encre-hl-jaune: #d4a736;
+  --encre-hl-vert: #529c69;
+  --encre-hl-lavande: #7f6eb3;
+  --encre-hl-peche: #b86554;
+
+  --encre-hud-bg: rgba(28, 26, 23, 0.94);
+  --encre-popover-bg: #1f1c19;
+
+  --encre-ombre-douce: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.35);
+  --encre-ombre-hover: 0 4px 10px rgba(0, 0, 0, 0.4), 0 14px 28px rgba(0, 0, 0, 0.45);
+  --encre-ombre-reliure: inset 4px 0 8px rgba(0, 0, 0, 0.4), inset -1px 0 2px rgba(255, 255, 255, 0.05);
+  --encre-ombre-popover: 0 8px 30px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --encre-ombre-tiroir: -10px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Reset de base */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--encre-fond);
+  color: var(--encre-texte);
+  font-family: var(--encre-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+}
+
+/* ==========================================================================
+   ENCRE — Design Readowl Tactile de Prestige
+   ========================================================================== */
+
+/* Variables de teintes Atelier & Reliure */
+:root {
+  --encre-cadre-fond: #ece7de;
+  --encre-panneau-fond: #fcfaf6;
+  --encre-sidebar-fond: #f4efe5;
+  --encre-sidebar-pointille: #ded4c3;
+  --encre-tablette-bois: linear-gradient(180deg, #f7f2ea 0%, #ede3d2 45%, #ded0bb 100%);
+  --encre-tablette-lumiere: #ffffff;
+  --encre-tablette-ombre-sol: rgba(50, 38, 24, 0.16);
+  --encre-livre-ombre: rgba(30, 22, 14, 0.25);
+  --encre-pilule-fond: #eee8dc;
+  --encre-champ-fond: #ffffff;
+}
+
+[data-theme="sombre"] {
+  --encre-cadre-fond: #0e0f11;
+  --encre-panneau-fond: #18191c;
+  --encre-sidebar-fond: #131416;
+  --encre-sidebar-pointille: #282a2e;
+  --encre-tablette-bois: linear-gradient(180deg, #2d2924 0%, #221f1b 45%, #171513 100%);
+  --encre-tablette-lumiere: #3d372f;
+  --encre-tablette-ombre-sol: rgba(0, 0, 0, 0.65);
+  --encre-livre-ombre: rgba(0, 0, 0, 0.7);
+  --encre-pilule-fond: #202226;
+  --encre-champ-fond: #1e2024;
+}
+
+/* Wrapper plein écran centrant le panneau de l'app */
+.encre-app-wrapper {
+  width: 100vw;
+  height: 100vh;
+  padding: 20px 28px;
+  background: var(--encre-cadre-fond);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: background 250ms ease;
+}
+
+.encre-app-wrapper.drag-actif .encre-sanctuaire-panneau {
+  border-color: var(--encre-accent);
+  box-shadow: 0 0 0 4px var(--encre-accent-subtil);
+}
+
+/* Panneau tactile avec coins arrondis (Style App iPad / macOS premium) */
+.encre-sanctuaire-panneau {
+  width: 100%;
+  height: 100%;
+  max-width: 1440px;
+  background: var(--encre-panneau-fond);
+  border-radius: 28px;
+  box-shadow: 
+    0 24px 64px rgba(0, 0, 0, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  overflow: hidden;
+  position: relative;
+}
+
+[data-theme="sombre"] .encre-sanctuaire-panneau {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 
+    0 28px 70px rgba(0, 0, 0, 0.65),
+    0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   1. SIDEBAR (À GAUCHE)
+   ========================================================================== */
+
+.encre-sanctuaire-sidebar {
+  width: 250px;
+  min-width: 250px;
+  background: var(--encre-sidebar-fond);
+  border-right: 1.5px dashed var(--encre-sidebar-pointille);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px 16px 18px;
+  box-sizing: border-box;
+  user-select: none;
+  z-index: 10;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.encre-sidebar-haut {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 0 0 auto;
+}
+
+.encre-sidebar-spacer {
+  flex: 1 1 auto;
+  min-height: 12px;
+}
+
+/* Logo avec hibou/chouette stylisée comme Readowl */
+.encre-logo-entete {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 6px;
+}
+
+.encre-logo-icone {
+  color: var(--encre-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.encre-logo-titre {
+  font-family: var(--encre-serif);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--encre-texte);
+  letter-spacing: -0.01em;
+}
+
+/* Navigation latérale */
+.encre-menu-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.encre-menu-bouton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-radius: 14px;
+  background: transparent;
+  border: none;
+  color: var(--encre-texte-sec);
+  font-family: var(--encre-sans);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  text-align: left;
+}
+
+.encre-menu-bouton:hover {
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--encre-texte);
+}
+
+[data-theme="sombre"] .encre-menu-bouton:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.encre-menu-bouton.actif {
+  background: var(--encre-panneau-fond);
+  color: var(--encre-accent);
+  font-weight: 600;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.encre-compte-bulle {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--encre-accent-subtil);
+  color: var(--encre-accent);
+}
+
+.encre-sidebar-categories {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.encre-sidebar-categories-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 0 4px;
+  color: var(--encre-texte-ter);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.encre-sidebar-categorie-creer {
+  padding: 3px 5px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--encre-accent);
+  cursor: pointer;
+  font: 600 10px var(--encre-sans);
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.encre-sidebar-categorie-creer:hover {
+  background: var(--encre-accent-subtil);
+}
+
+.encre-sidebar-categories-liste {
+  display: flex;
+  max-height: min(24vh, 220px);
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.encre-sidebar-categorie {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 2px;
+  border-radius: 6px;
+}
+
+.encre-sidebar-categorie.actif {
+  background: var(--encre-panneau-fond);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.encre-sidebar-categorie-nom {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding: 7px 8px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--encre-texte-sec);
+  cursor: pointer;
+  font: 12px var(--encre-sans);
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.encre-sidebar-categorie.actif .encre-sidebar-categorie-nom {
+  color: var(--encre-accent);
+  font-weight: 600;
+}
+
+.encre-sidebar-categorie-action {
+  display: inline-flex;
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--encre-texte-ter);
+  cursor: pointer;
+  font: 17px var(--encre-sans);
+  opacity: 0.55;
+}
+
+.encre-sidebar-categorie:hover .encre-sidebar-categorie-action,
+.encre-sidebar-categorie-action:focus-visible {
+  opacity: 1;
+}
+
+.encre-sidebar-categorie-action:hover {
+  background: var(--encre-accent-subtil);
+  color: var(--encre-accent);
+}
+
+.encre-sidebar-categorie-action.supprimer:hover {
+  background: rgba(179, 58, 43, 0.1);
+  color: #b33a2b;
+}
+
+.encre-sidebar-categories-vide {
+  padding: 5px 8px;
+  color: var(--encre-texte-ter);
+  font: italic 11px var(--encre-serif);
+}
+
+/* Bas de la barre latérale — toujours visible, ne se fait jamais pousser */
+.encre-sidebar-bas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--encre-bordure-douce);
+  background: var(--encre-sidebar-fond);
+}
+
+/* Carte "Continuer la lecture" (Style Readowl) */
+.encre-carte-continuer {
+  background: var(--encre-panneau-fond);
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 180ms ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+[data-theme="sombre"] .encre-carte-continuer {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.encre-carte-continuer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.encre-continuer-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--encre-texte-sec);
+  margin-bottom: 7px;
+  align-self: flex-start;
+  padding-left: 2px;
+}
+
+.encre-continuer-livre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.encre-continuer-couv {
+  width: 58px;
+  height: 80px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 
+    -2px 0 4px rgba(0, 0, 0, 0.15),
+    2px 6px 12px rgba(0, 0, 0, 0.2);
+  background: #333;
+}
+
+.encre-continuer-couv img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.encre-continuer-sans-couv {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #3d2f24, #1f1812);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--encre-serif);
+  font-size: 32px;
+  color: #e5b078;
+}
+
+.encre-continuer-barre-progression {
+  width: 58px;
+  height: 3px;
+  overflow: hidden;
+  background: var(--encre-bordure);
+  border-radius: 2px;
+  margin-top: 8px;
+}
+
+.encre-continuer-barre-progression span,
+.encre-progression-livre span {
+  display: block;
+  height: 100%;
+  background: var(--encre-accent);
+}
+
+/* Profil lecteur */
+.encre-lecteur-profil {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 4px;
+}
+
+.encre-profil-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--encre-panneau-fond);
+  border: 1px solid var(--encre-sidebar-pointille);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.encre-profil-texte {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.encre-profil-nom {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--encre-texte);
+  line-height: 1.2;
+}
+
+.encre-profil-edition {
+  font-size: 10.5px;
+  color: var(--encre-texte-ter);
+}
+
+.encre-theme-toggle-discret {
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: transform 140ms ease;
+}
+
+.encre-theme-toggle-discret:hover {
+  transform: scale(1.15);
+}
+
+/* ==========================================================================
+   2. ZONE DES ÉTAGÈRES (À DROITE)
+   ========================================================================== */
+
+.encre-sanctuaire-contenu {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--encre-panneau-fond);
+  position: relative;
+}
+
+/* Barre de recherche intégrée comme Readowl */
+.encre-barre-recherche-haut {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 24px 36px 18px;
+}
+
+/* Pilule Étagères / Tous les livres */
+.encre-onglets-pilule {
+  display: flex;
+  background: var(--encre-pilule-fond);
+  padding: 3px;
+  border-radius: 12px;
+  gap: 2px;
+}
+
+.encre-pilule-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--encre-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--encre-texte-sec);
+  padding: 6px 14px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.encre-pilule-btn.actif {
+  background: var(--encre-panneau-fond);
+  color: var(--encre-texte);
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* Champ de recherche avec loupe intégrée */
+.encre-champ-loupe {
+  flex: 1 1 220px;
+  max-width: 480px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--encre-champ-fond);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 7px 14px;
+  color: var(--encre-texte-ter);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="sombre"] .encre-champ-loupe {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.encre-champ-loupe input {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--encre-sans);
+  font-size: 13px;
+  color: var(--encre-texte);
+  width: 100%;
+  min-width: 0;
+}
+
+.encre-champ-loupe input::placeholder {
+  color: var(--encre-texte-ter);
+}
+
+.encre-clear-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--encre-texte-ter);
+  line-height: 1;
+  padding: 0;
+}
+
+.encre-btn-ajouter-livre {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: var(--encre-accent);
+  color: #ffffff;
+  border: none;
+  font-family: var(--encre-sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 140ms ease;
+  box-shadow: 0 2px 6px rgba(176, 103, 32, 0.25);
+  flex-shrink: 0;
+}
+
+.encre-btn-ajouter-livre:hover {
+  background: var(--encre-accent-hover);
+  transform: translateY(-1px);
+}
+
+.encre-statut-toast {
+  margin: 0 36px 12px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: var(--encre-accent-subtil);
+  color: var(--encre-accent);
+  font-size: 12.5px;
+}
+
+/* Zone scrollable des étagères */
+.encre-scroll-rayonnages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 36px 60px;
+}
+
+/* Ensemble des étagères */
+.encre-ensemble-etageres {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.encre-etagere-bloc {
+  display: flex;
+  flex-direction: column;
+}
+
+.encre-etagere-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 0 4px;
+}
+
+.encre-etagere-titre-section {
+  font-family: var(--encre-serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--encre-texte);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.encre-etagere-lien-tout {
+  background: none;
+  border: none;
+  color: var(--encre-texte-sec);
+  font-family: var(--encre-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0;
+  transition: color 140ms ease;
+}
+
+.encre-etagere-lien-tout:hover {
+  color: var(--encre-accent);
+}
+
+/* Scène 3D avec les livres et la tablette */
+.encre-etagere-scene {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.encre-etagere-livres {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
+  align-items: flex-end;
+  justify-items: center;
+  gap: 20px 14px;
+  padding: 0 16px;
+  min-height: 240px;
+  z-index: 2;
+  min-width: 0;
+  overflow: hidden;
+  padding-bottom: 2px;
+}
+
+.encre-etagere-livres.vide {
+  min-height: 72px;
+  align-items: center;
+  justify-content: center;
+}
+
+.encre-etagere-livres:not(.vide) .encre-item-livre {
+  width: 100%;
+  max-width: 132px;
+  min-width: 0;
+  justify-self: center;
+}
+
+.encre-etagere-vide {
+  color: var(--encre-texte-ter);
+  font-family: var(--encre-serif);
+  font-size: 13px;
+  font-style: italic;
+}
+
+/* TABLETTE EN RELIEF 3D (Style Image 1) */
+.encre-tablette-3d {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: var(--encre-tablette-bois);
+  border-radius: 4px;
+  z-index: 1;
+  margin-top: -2px;
+}
+
+.encre-tablette-face-superieure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--encre-tablette-lumiere);
+  opacity: 0.9;
+  border-radius: 4px 4px 0 0;
+}
+
+.encre-tablette-biseau-lumineux {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.encre-tablette-ombre-portee {
+  position: absolute;
+  top: 100%;
+  left: 8px;
+  right: 8px;
+  height: 14px;
+  background: radial-gradient(ellipse at top, var(--encre-tablette-ombre-sol) 0%, transparent 75%);
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   3. LE LIVRE TACTILE EN RELIEF BROCHÉ (IMAGE 1 & 3)
+   ========================================================================== */
+
+.encre-item-livre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  width: 132px;
+  flex-shrink: 0;
+  perspective: 900px;
+}
+
+.encre-item-livre:hover,
+.encre-item-livre:focus-within {
+  z-index: 8;
+}
+
+.encre-livre-bouton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+}
+
+.encre-livre-corps {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 2px 5px 5px 2px;
+  overflow: hidden;
+  box-shadow: 
+    -2px 0 3px rgba(0, 0, 0, 0.12),
+    2px 8px 18px var(--encre-livre-ombre);
+  transition: all 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-style: preserve-3d;
+  background: #2a2a2e;
+}
+
+/* Reliure / Mors gauche broché */
+.encre-reliure-gauche {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 14px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.12) 22%,
+    rgba(255, 255, 255, 0.18) 38%,
+    transparent 100%
+  );
+  z-index: 4;
+  pointer-events: none;
+}
+
+.encre-couverture-cadre {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #25262a;
+}
+
+.encre-couverture-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Couverture Art Noble si pas d'image */
+.encre-couverture-art {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 10px;
+  box-sizing: border-box;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.encre-lettrine-art {
+  font-family: var(--encre-serif);
+  font-size: 50px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.encre-titre-art {
+  font-family: var(--encre-serif);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #ffffff;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.encre-auteur-art {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Lustre satiné en diagonale */
+.encre-vernis-reflet {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.03) 45%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Ombre de contact sous le livre */
+.encre-ombre-contact {
+  position: absolute;
+  bottom: 0;
+  left: 4px;
+  right: 4px;
+  height: 4px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.45) 0%, transparent 80%);
+  pointer-events: none;
+}
+
+/* Élévation 3D au survol */
+.encre-item-livre:hover .encre-livre-corps {
+  transform: translateY(-8px) rotateY(-3deg) scale(1.02);
+  box-shadow: 
+    -4px 4px 10px rgba(0, 0, 0, 0.15),
+    4px 18px 26px var(--encre-livre-ombre);
+}
+
+/* Métadonnées épurées sous le livre */
+.encre-livre-infos {
+  margin-top: 12px;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.encre-livre-titre-texte {
+  font-family: var(--encre-serif);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--encre-texte);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.encre-livre-auteur-texte {
+  font-size: 10.5px;
+  color: var(--encre-texte-sec);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.encre-badge-relocaliser {
+  font-size: 9.5px;
+  color: #d9480f;
+  background: rgba(217, 72, 15, 0.12);
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-top: 2px;
+  align-self: center;
+}
+
+.encre-progression-livre {
+  width: 100%;
+  height: 3px;
+  margin-top: 5px;
+  overflow: hidden;
+  background: var(--encre-bordure);
+  border-radius: 2px;
+}
+
+.encre-livre-menu-ancre {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.encre-livre-menu-toggle {
+  display: flex;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--encre-panneau-fond);
+  border: 1px solid var(--encre-sidebar-pointille);
+  color: var(--encre-texte-sec);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: auto;
+  transition: all 140ms ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.encre-item-livre:hover .encre-livre-menu-toggle,
+.encre-livre-menu-toggle:focus-visible,
+.encre-livre-menu-ancre:focus-within .encre-livre-menu-toggle {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.encre-livre-menu {
+  position: fixed;
+  display: flex;
+  width: 184px;
+  flex-direction: column;
+  padding: 4px;
+  border: 1px solid var(--encre-bordure);
+  border-radius: 6px;
+  background: var(--encre-panneau-fond);
+  box-shadow: var(--encre-ombre-popover);
+  z-index: 100;
+}
+
+.encre-livre-menu button {
+  width: 100%;
+  padding: 7px 9px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--encre-texte);
+  cursor: pointer;
+  font: 12px var(--encre-sans);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.encre-livre-menu button:hover,
+.encre-livre-menu button:focus-visible {
+  outline: none;
+  background: var(--encre-surface-hover);
+}
+
+.encre-livre-menu .encre-livre-menu-supprimer {
+  margin-top: 3px;
+  border-top: 1px solid var(--encre-bordure-douce);
+  border-radius: 0 0 4px 4px;
+  color: #b33a2b;
+}
+
+.encre-livre-menu-categories {
+  width: 204px;
+}
+
+.encre-picker-fond {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(20, 18, 15, 0.38);
+}
+
+.encre-picker-carte {
+  display: flex;
+  width: min(520px, 100%);
+  max-height: min(680px, 86vh);
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--encre-bordure);
+  border-radius: 10px;
+  background: var(--encre-panneau-fond);
+  box-shadow: var(--encre-ombre-popover);
+}
+
+.encre-picker-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--encre-bordure-douce);
+}
+
+.encre-picker-entete h2 {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--encre-texte);
+  font: 600 18px var(--encre-serif);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.encre-picker-fermer {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--encre-texte-sec);
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.encre-picker-fermer:hover {
+  background: var(--encre-surface-hover);
+}
+
+.encre-picker-liste {
+  display: flex;
+  min-height: 72px;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  overflow-y: auto;
+}
+
+.encre-picker-option {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  color: var(--encre-texte);
+  font-size: 13px;
+}
+
+.encre-picker-option:hover {
+  background: var(--encre-surface-hover);
+}
+
+.encre-picker-option input {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  accent-color: var(--encre-accent);
+}
+
+.encre-picker-option span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.encre-picker-option small {
+  margin-left: auto;
+  overflow: hidden;
+  color: var(--encre-texte-ter);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.encre-picker-option button {
+  margin-left: auto;
+  padding: 5px 8px;
+  border: 1px solid var(--encre-bordure);
+  border-radius: 5px;
+  background: var(--encre-surface);
+  color: var(--encre-accent);
+  cursor: pointer;
+  font: 11px var(--encre-sans);
+}
+
+.encre-picker-vide {
+  margin: auto;
+  padding: 12px;
+  color: var(--encre-texte-ter);
+  font: italic 13px var(--encre-serif);
+  text-align: center;
+}
+
+.encre-picker-creer {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--encre-bordure-douce);
+}
+
+.encre-picker-creer input {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding: 8px 10px;
+  border: 1px solid var(--encre-bordure);
+  border-radius: 5px;
+  background: var(--encre-surface);
+  color: var(--encre-texte);
+  font: 13px var(--encre-sans);
+}
+
+.encre-picker-creer button {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 5px;
+  background: var(--encre-accent);
+  color: #ffffff;
+  cursor: pointer;
+  font: 600 12px var(--encre-sans);
+}
+
+.encre-picker-creer button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.encre-picker-erreur {
+  margin: 0;
+  padding: 0 14px 12px;
+  color: #b33a2b;
+  font-size: 12px;
+}
+
+/* ==========================================================================
+   4. GALERIE SUR CIMAISES (STYLE MINIMAL ART / IMAGE 3)
+   ========================================================================== */
+
+.encre-galerie-cimaises {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 40px 28px;
+  justify-items: center;
+  padding: 10px 0 40px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.encre-cimaise-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.encre-tablette-fine {
+  width: 150px;
+  height: 2px;
+  background: var(--encre-sidebar-pointille);
+  margin-top: 14px;
+  border-radius: 2px;
+}
+
+.encre-recherche-vide {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--encre-texte-sec);
+  font-family: var(--encre-serif);
+}
+
+/* ==========================================================================
+   5. ÉTAT INITIAL SANS LIVRE (EMPTY STATE RÉINVENTÉ)
+   ========================================================================== */
+
+.encre-accueil-vide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.encre-drop-socle {
+  width: 100%;
+  max-width: 440px;
+  background: var(--encre-sidebar-fond);
+  border: 2px dashed var(--encre-sidebar-pointille);
+  border-radius: 22px;
+  padding: 44px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: default;
+  transition: all 200ms ease;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+}
+
+.encre-drop-socle:hover {
+  border-color: var(--encre-accent);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgba(176, 103, 32, 0.1);
+}
+
+.encre-drop-icone-chouette {
+  color: var(--encre-accent);
+  margin-bottom: 16px;
+  transition: transform 180ms ease;
+}
+
+.encre-drop-socle:hover .encre-drop-icone-chouette {
+  transform: scale(1.08);
+}
+
+.encre-drop-titre {
+  font-family: var(--encre-serif);
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: var(--encre-texte);
+}
+
+.encre-drop-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--encre-texte-sec);
+  margin: 0 0 20px;
+  max-width: 340px;
+}
+
+.encre-bouton-parcourir {
+  padding: 9px 20px;
+  border-radius: 12px;
+  background: var(--encre-accent);
+  color: #ffffff;
+  border: none;
+  font-family: var(--encre-sans);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(176, 103, 32, 0.25);
+}
+
+
+
+/* ==========================================================================
+   LECTEUR IMMERSIF (ZEN MODE)
+   ========================================================================== */
+
+.encre-lecteur-racine {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  background: var(--encre-fond);
+  color: var(--encre-texte);
+  font-family: var(--encre-sans);
+}
+
+/* Zone invisible de survol pour réveiller le HUD */
+.encre-zone-survol {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  z-index: 40;
+  pointer-events: auto;
+}
+
+/* HUD flottant supérieur escamotable (Verre dépoli & toucher noble) */
+.encre-hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  padding: 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--encre-hud-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid var(--encre-bordure-douce);
+  z-index: 50;
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), opacity 240ms ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* Affichage du HUD si survolé ou activé */
+.encre-hud-visible,
+.encre-hud:hover,
+.encre-zone-survol:hover + .encre-hud {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.encre-hud-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.encre-hud-separateur-vertical {
+  width: 1px;
+  height: 18px;
+  background: var(--encre-bordure);
+  margin: 0 4px;
+}
+
+.encre-hud-titre-livre {
+  font-family: var(--encre-serif);
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--encre-texte);
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Boutons universels du HUD */
+.encre-hud-btn {
+  font-family: var(--encre-sans);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 7px 13px;
+  border-radius: var(--encre-rayon-m);
+  background: transparent;
+  color: var(--encre-texte-sec);
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+}
+
+.encre-hud-btn:hover {
+  background: var(--encre-surface-hover);
+  color: var(--encre-texte);
+  transform: translateY(-1px);
+}
+
+.encre-hud-btn.actif {
+  background: var(--encre-surface);
+  color: var(--encre-accent);
+  border-color: var(--encre-bordure);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  font-weight: 600;
+}
+
+.encre-hud-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+.encre-hud-glyphe-aa {
+  font-family: var(--encre-serif);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.encre-hud-badge-nombre {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  background: var(--encre-accent);
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.encre-hud-btn-importer {
+  background: var(--encre-accent-subtil);
+  color: var(--encre-accent);
+  border-color: rgba(176, 103, 32, 0.2);
+}
+
+.encre-hud-btn-importer:hover {
+  background: var(--encre-accent);
+  color: #ffffff;
+  border-color: var(--encre-accent);
+}
+
+/* Zone Foliate principale */
+.encre-lecteur-main {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--encre-fond);
+}
+
+foliate-view {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: var(--encre-fond);
+}
+
+/* Pliure centrale simulant la reliure d'un livre ouvert à 2 pages */
+.encre-pliure-livre {
+  position: absolute;
+  top: 32px;
+  bottom: 32px;
+  left: 50%;
+  width: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--encre-bordure) 15%,
+    var(--encre-bordure) 85%,
+    transparent 100%
+  );
+  opacity: 0.7;
+  pointer-events: none;
+  z-index: 15;
+}
+
+/* Marges et pastilles de navigation de pages */
+.encre-zone-nav {
+  position: absolute;
+  top: 60px;
+  bottom: 40px;
+  width: 90px;
+  z-index: 25;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.encre-zone-nav-gauche {
+  left: 0;
+}
+
+.encre-zone-nav-droite {
+  right: 0;
+}
+
+.encre-nav-pastille {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--encre-hud-bg);
+  border: 1px solid var(--encre-bordure);
+  color: var(--encre-texte);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: all 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+.encre-zone-nav:hover .encre-nav-pastille {
+  opacity: 0.85;
+  transform: scale(1);
+}
+
+/* ==========================================================================
+   MENU FLOTTANT D'APPARENCE (Aa)
+   ========================================================================== */
+
+.encre-popover-apparence {
+  position: absolute;
+  top: 64px;
+  right: 28px;
+  width: 310px;
+  background: var(--encre-hud-bg);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--encre-bordure);
+  border-radius: 18px;
+  box-shadow: var(--encre-ombre-popover);
+  padding: 18px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: encreApparition 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes encreApparition {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.encre-groupe-reglage {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.encre-label-reglage {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--encre-texte-ter);
+}
+
+.encre-segments {
+  display: flex;
+  background: var(--encre-surface-hover);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.encre-segment-bouton {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--encre-texte-sec);
+  font-family: var(--encre-sans);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 140ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.encre-segment-bouton:hover {
+  color: var(--encre-texte);
+}
+
+.encre-segment-bouton.encre-segment-actif {
+  background: var(--encre-surface);
+  color: var(--encre-texte);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   MENU FLOTTANT DE SURLIGNAGE (IN-SITU)
+   ========================================================================== */
+
+.encre-popover-selection {
+  position: absolute;
+  z-index: 70;
+  background: var(--encre-popover-bg);
+  border: 1px solid var(--encre-bordure);
+  border-radius: var(--encre-rayon-pill);
+  box-shadow: var(--encre-ombre-popover);
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translate(-50%, -100%);
+  margin-top: -10px;
+  animation: encrePop 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+@keyframes encrePop {
+  from { opacity: 0; transform: translate(-50%, -90%) scale(0.95); }
+  to { opacity: 1; transform: translate(-50%, -100%) scale(1); }
+}
+
+.encre-pastilles-couleurs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.encre-pastille {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  padding: 0;
+}
+
+.encre-pastille:hover {
+  transform: scale(1.18);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.encre-separateur-vertical {
+  width: 1px;
+  height: 18px;
+  background: var(--encre-bordure);
+}
+
+.encre-action-selection {
+  background: transparent;
+  border: none;
+  color: var(--encre-texte-sec);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: var(--encre-rayon-s);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.encre-action-selection:hover {
+  background: var(--encre-surface-hover);
+  color: var(--encre-texte);
+}
+
+/* Zone note rapide dans la popover de sélection */
+.encre-note-rapide-boite {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+  width: 260px;
+  background: var(--encre-popover-bg);
+  border: 1px solid var(--encre-bordure);
+  border-radius: var(--encre-rayon-m);
+  box-shadow: var(--encre-ombre-popover);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.encre-note-textarea {
+  width: 100%;
+  border: 1px solid var(--encre-bordure);
+  border-radius: var(--encre-rayon-s);
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 12px;
+  background: var(--encre-surface);
+  color: var(--encre-texte);
+  resize: vertical;
+  outline: none;
+}
+
+.encre-note-textarea:focus {
+  border-color: var(--encre-accent);
+}
+
+/* ==========================================================================
+   TIROIRS LATÉRAUX (SLIDE-OVERS SOMMAIRE & NOTES)
+   ========================================================================== */
+
+.encre-tiroir-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 55;
+  animation: encreFade 180ms ease;
+}
+
+@keyframes encreFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.encre-tiroir {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 340px;
+  background: var(--encre-surface);
+  border-left: 1px solid var(--encre-bordure);
+  box-shadow: var(--encre-ombre-tiroir);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  animation: encreGlisse 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes encreGlisse {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.encre-tiroir-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--encre-bordure);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.encre-tiroir-titre {
+  font-family: var(--encre-serif);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--encre-texte);
+  margin: 0;
+}
+
+.encre-tiroir-fermer {
+  background: transparent;
+  border: none;
+  color: var(--encre-texte-sec);
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.encre-tiroir-fermer:hover {
+  background: var(--encre-surface-hover);
+  color: var(--encre-texte);
+}
+
+.encre-tiroir-contenu {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0;
+}
+
+/* Sommaire Items */
+.encre-sommaire-item {
+  width: 100%;
+  text-align: left;
+  padding: 10px 20px;
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  color: var(--encre-texte);
+  cursor: pointer;
+  display: block;
+  transition: background 120ms ease;
+  line-height: 1.4;
+}
+
+.encre-sommaire-item:hover {
+  background: var(--encre-surface-hover);
+  color: var(--encre-accent);
+}
+
+/* Notes & Highlights */
+.encre-note-groupe {
+  margin-bottom: 16px;
+}
+
+.encre-note-chapitre-titre {
+  padding: 8px 20px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--encre-texte-ter);
+}
+
+.encre-note-carte {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--encre-bordure-douce);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.encre-note-citation {
+  font-family: var(--encre-serif);
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--encre-texte);
+  border-left: 3px solid var(--encre-accent);
+  padding-left: 10px;
+}
+
+.encre-note-editeur {
+  width: 100%;
+  background: var(--encre-surface-hover);
+  border: 1px solid var(--encre-bordure-douce);
+  border-radius: var(--encre-rayon-s);
+  padding: 6px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--encre-texte);
+  resize: vertical;
+  outline: none;
+}
+
+.encre-note-editeur:focus {
+  border-color: var(--encre-accent);
+  background: var(--encre-surface);
+}
+
+.encre-note-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Pied discret en lecture */
+.encre-pied-lecture {
+  position: absolute;
+  bottom: 12px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 11px;
+  color: var(--encre-texte-ter);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms ease;
+}
+
+.encre-hud-visible ~ .encre-pied-lecture {
+  opacity: 0.85;
+}
+
+/* T4g — Épigraphe fixe en tête de la colonne principale */
+.encre-bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background: var(--encre-panneau-fond);
+  color: var(--encre-texte-sec);
+  border: 1px solid var(--encre-bordure);
+  font-family: var(--encre-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease, transform 140ms ease;
+  white-space: nowrap;
+}
+
+.encre-bouton:hover {
+  background: var(--encre-surface-hover);
+  color: var(--encre-texte);
+  border-color: var(--encre-bordure);
+}
+
+.encre-bouton:active {
+  transform: translateY(1px);
+}
+
+.encre-bouton:disabled {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
+.encre-bouton-primaire {
+  background: var(--encre-accent);
+  border-color: var(--encre-accent);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(176, 103, 32, 0.25);
+}
+
+.encre-bouton-primaire:hover {
+  background: var(--encre-accent-hover);
+  border-color: var(--encre-accent-hover);
+  color: #ffffff;
+}
+
+.encre-bouton-discret {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  font-weight: 500;
+}
+
+.encre-bouton-discret:hover {
+  background: var(--encre-surface-hover);
+  border-color: transparent;
+}
+
+.encre-relire-epigraphe {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex: 0 0 72px;
+  min-height: 72px;
+  max-height: 72px;
+  min-width: 0;
+  margin: 0 36px;
+  padding: 6px 12px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--encre-bordure-douce);
+}
+
+.encre-relire-contenu {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.encre-relire-label {
+  color: var(--encre-accent);
+  font-family: var(--encre-sans);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.encre-relire-citation-bouton {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: var(--encre-texte);
+  cursor: pointer;
+  text-align: left;
+}
+
+.encre-relire-extrait {
+  display: -webkit-box;
+  overflow: hidden;
+  font-family: var(--encre-serif);
+  font-size: 14px;
+  font-style: italic;
+  line-height: 16px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+}
+
+.encre-relire-citation-bouton:focus-visible,
+.encre-relire-action:focus-visible {
+  outline: 2px solid var(--encre-accent);
+  outline-offset: 2px;
+}
+
+.encre-relire-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+}
+
+.encre-relire-action {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--encre-bordure);
+  border-radius: 6px;
+  background: var(--encre-panneau-fond);
+  color: var(--encre-texte-sec);
+  cursor: pointer;
+}
+
+.encre-relire-action:hover {
+  border-color: var(--encre-accent);
+  color: var(--encre-accent);
+}
+
+.encre-relire-source {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--encre-texte-sec);
+  font-size: 11px;
+  line-height: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   T7b — Objectifs journaliers (anneau HUD + widget sidebar + popover)
+   ========================================================================== */
+
+/* Anneau HUD 28px : à côté d'Apparence, ne bloque rien (HUD au survol intact) */
+.encre-anneau-objectif {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 300ms ease;
+}
+
+.encre-anneau-objectif .encre-anneau-fond {
+  stroke: var(--encre-bordure);
+}
+
+.encre-anneau-objectif .encre-anneau-progres {
+  stroke: var(--encre-accent);
+  transition: stroke-dashoffset 300ms ease;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.encre-anneau-objectif .encre-anneau-chiffre {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--encre-serif);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--encre-texte-sec);
+  line-height: 1;
+}
+
+.encre-anneau-objectif.atteint .encre-anneau-chiffre {
+  color: var(--encre-accent);
+}
+
+.encre-anneau-objectif.cache {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Anneau réutilisé (widget sidebar T7b, chip en-tête T8c) */
+.encre-objectifs-anneau .encre-anneau-fond {
+  stroke: var(--encre-bordure);
+}
+
+.encre-objectifs-anneau .encre-anneau-progres {
+  stroke: var(--encre-accent);
+  transition: stroke-dashoffset 300ms ease;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+/* Popover objectifs (T8c : ancrée sous la chip d'en-tête) */
+.encre-popover-objectifs {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--encre-popover-bg);
+  border: 1px solid var(--encre-bordure);
+  border-radius: 10px;
+  box-shadow: var(--encre-ombre-popover);
+  animation: encreApparition 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* T7c(0) : 7 chips compactes sur une rangée (fini le 5+2 à trous) */
+.encre-objectifs-presets {
+  flex-wrap: nowrap;
+}
+
+.encre-objectifs-presets .encre-segment-bouton {
+  min-width: 0;
+  padding: 6px 2px;
+  font-size: 11px;
+}
+
+/* ==========================================================================
+   T7c — Objectif annuel (stepper popover + ligne annuelle widget)
+   ========================================================================== */
+
+.encre-stepper-annee {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.encre-stepper-bouton {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--encre-bordure);
+  border-radius: 6px;
+  background: var(--encre-panneau-fond);
+  color: var(--encre-texte);
+  cursor: pointer;
+  font-size: 15px;
+  line-height: 1;
+  transition: border-color 140ms ease, color 140ms ease;
+}
+
+.encre-stepper-bouton:hover:not(:disabled) {
+  border-color: var(--encre-accent);
+  color: var(--encre-accent);
+}
+
+.encre-stepper-bouton:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.encre-stepper-valeur {
+  min-width: 28px;
+  text-align: center;
+  font-family: var(--encre-serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--encre-texte);
+}
+
+/* ==========================================================================
+   T8c — Chip objectifs en en-tête (coup d'œil + popover dessous)
+   ========================================================================== */
+
+.encre-chip-objectifs-ancre {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.encre-chip-objectifs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 6px 12px;
+  border: 1px solid var(--encre-bordure);
+  border-radius: 9999px;
+  background: var(--encre-champ-fond);
+  cursor: pointer;
+  font-family: var(--encre-sans);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: border-color 140ms ease;
+}
+
+.encre-chip-objectifs:hover {
+  border-color: var(--encre-accent);
+}
+
+.encre-chip-objectifs-minutes {
+  color: var(--encre-texte);
+}
+
+.encre-chip-objectifs-serie {
+  color: var(--encre-texte-sec);
+  font-weight: 500;
+}
+
+.encre-chip-objectifs-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--encre-bordure);
+}
+
+.encre-chip-objectifs-livres {
+  color: var(--encre-texte-sec);
+  font-weight: 500;
+}
+
+/* Popover ré-ancrée sous la chip (même contenu : presets + stepper) */
+.encre-popover-objectifs-entete {
+  top: calc(100% + 8px);
+  right: 0;
+  bottom: auto;
+  left: auto;
+  width: 232px;
+}
+
+/* Troncature responsive : série puis annuel, anneau+minutes jamais */
+@media (max-width: 1100px) {
+  .encre-chip-objectifs-serie {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .encre-chip-objectifs-livres,
+  .encre-chip-objectifs-sep {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   T8b — Profil : entrée sidebar, vue pleine, heatmap, chips
+   ========================================================================== */
+
+/* Entrée profil en pied de sidebar (remplace « Lecteur / Édition privée ») */
+.encre-profil-entree {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: 10px;
+  padding: 4px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background 140ms ease;
+}
+
+.encre-profil-entree:hover {
+  background: var(--encre-accent-subtil);
+}
+
+.encre-profil-avatar-initiales {
+  background: var(--encre-accent);
+  border: 0;
+  color: #ffffff;
+  font-family: var(--encre-serif);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.encre-profil-entree .encre-profil-nom {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.encre-profil-chevron {
+  flex: 0 0 auto;
+  color: var(--encre-texte-ter);
+  font-size: 18px;
+  line-height: 1;
+}
+
+/* Vue profil pleine */
+.encre-profil-contenu {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 26px;
+  overflow-y: auto;
+  padding: 28px 36px 60px;
+  background: var(--encre-panneau-fond);
+}
+
+.encre-profil-retour {
+  align-self: flex-start;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  color: var(--encre-texte-sec);
+  cursor: pointer;
+  font-family: var(--encre-sans);
+  font-size: 13px;
+  font-weight: 600;
+  transition: color 140ms ease;
+}
+
+.encre-profil-retour:hover {
+  color: var(--encre-accent);
+}
+
+.encre-profil-entete {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.encre-profil-avatar-grand {
+  display: inline-flex;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--encre-accent);
+  color: #ffffff;
+  font-family: var(--encre-serif);
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.encre-profil-identite {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.encre-profil-nom-grand {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--encre-texte);
+  cursor: text;
+  font-family: var(--encre-serif);
+  font-size: 24px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.encre-profil-nom-input {
+  width: 240px;
+  max-width: 100%;
+  padding: 4px 10px;
+  border: 1px solid var(--encre-accent);
+  border-radius: 8px;
+  outline: none;
+  background: var(--encre-surface);
+  color: var(--encre-texte);
+  font-family: var(--encre-serif);
+  font-size: 20px;
+}
+
+.encre-profil-depuis {
+  color: var(--encre-texte-sec);
+  font-size: 12px;
+}
+
+/* Heatmap 53×7 (scroll horizontal si étroit, jamais de wrap) */
+.encre-heat-scroll {
+  overflow-x: auto;
+  padding: 30px 6px 8px;
+  scrollbar-width: thin;
+}
+
+.encre-heat-table {
+  display: flex;
+  width: max-content;
+  gap: 8px;
+}
+
+.encre-heat-jours {
+  display: grid;
+  grid-template-rows: repeat(7, 12px);
+  gap: 3px;
+  padding-top: 20px;
+  color: var(--encre-texte-ter);
+  font-size: 9px;
+}
+
+.encre-heat-jours span {
+  line-height: 12px;
+}
+
+.encre-heat-corps {
+  display: flex;
+  flex-direction: column;
+}
+
+.encre-heat-mois {
+  display: grid;
+  height: 14px;
+  grid-template-columns: repeat(53, 12px);
+  gap: 3px;
+  margin-bottom: 6px;
+  color: var(--encre-texte-ter);
+  font-size: 10px;
+}
+
+.encre-heat-mois span {
+  overflow: visible;
+  line-height: 14px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.encre-heat-grille {
+  display: grid;
+  grid-template-rows: repeat(7, 12px);
+  grid-auto-flow: column;
+  gap: 3px;
+}
+
+.encre-heat-cellule {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background: #e3ddd2;
+}
+
+.encre-heat-cellule.n1 { background: #f5e6c8; }
+.encre-heat-cellule.n2 { background: #e8c99a; }
+.encre-heat-cellule.n3 { background: #d99a4e; }
+.encre-heat-cellule.n4 { background: #b0691f; }
+
+[data-theme="sombre"] .encre-heat-cellule { background: #35312a; }
+[data-theme="sombre"] .encre-heat-cellule.n1 { background: #4a3a25; }
+[data-theme="sombre"] .encre-heat-cellule.n2 { background: #6b4f2e; }
+[data-theme="sombre"] .encre-heat-cellule.n3 { background: #9b6b3a; }
+[data-theme="sombre"] .encre-heat-cellule.n4 { background: #c47a2e; }
+
+.encre-heat-tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  z-index: 5;
+  padding: 4px 8px;
+  border-radius: 6px;
+  opacity: 0;
+  background: var(--encre-surface);
+  box-shadow: var(--encre-ombre-douce);
+  color: var(--encre-texte);
+  font-family: var(--encre-serif);
+  font-size: 12px;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 120ms ease;
+  white-space: nowrap;
+}
+
+.encre-heat-cellule:hover .encre-heat-tip {
+  opacity: 1;
+}
+
+/* Chips statistiques */
+.encre-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.encre-chip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  border: 1px solid var(--encre-bordure-douce);
+  border-radius: 10px;
+  background: var(--encre-surface);
+}
+
+.encre-chip-titre {
+  color: var(--encre-texte-ter);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.encre-chip-valeur {
+  color: var(--encre-texte);
+  font-family: var(--encre-serif);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.encre-chip-sous {
+  color: var(--encre-texte-sec);
+  font-size: 12px;
+}

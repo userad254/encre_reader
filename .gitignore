@@ -1,0 +1,40 @@
+# Dépendances (reconstruites par `npm install` + postinstall electron-rebuild)
+node_modules/
+
+# Build (reconstruit par `npm run build`)
+dist/
+
+# Sorties packaging futures (Forge / builder, Phase 1+)
+out/
+
+# Scripts locaux ad-hoc (chemins machine perso, pas du projet)
+test-verify-run.js
+test-verify.html
+
+# Logs
+*.log
+npm-debug.log*
+
+# Bases SQLite locales (userData + essais éventuels)
+*.db
+*.sqlite
+*.sqlite-journal
+
+# Environnements
+.env
+.env.local
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS (au cas où)
+.DS_Store

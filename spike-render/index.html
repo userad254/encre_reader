@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spike rendu EPUB — epub.js vs foliate-js</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 16px; background: #f0f0f0; color: #111; }
+  body.dark-chrome { background: #1b1b1b; color: #e8e6e3; }
+  h1 { font-size: 18px; margin: 0 0 12px; }
+  #controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    margin-bottom: 12px; padding: 10px; border: 1px solid #999; max-width: 1100px; }
+  #controls label { display: flex; gap: 6px; align-items: center; font-size: 14px; }
+  button { padding: 6px 12px; cursor: pointer; }
+  /* Conteneur de largeur FIXE ~700px (CA4 : mode paginé colonne) */
+  #viewer-wrap { width: 700px; max-width: 96vw; height: 800px; margin: 0 auto;
+    border: 2px solid #666; background: #fff; position: relative; overflow: hidden; }
+  #viewer-wrap.dark-content { background: #161616; border-color: #888; }
+  #epubjs-container { width: 100%; height: 100%; }
+  foliate-view { width: 100%; height: 100%; display: block; }
+  .hidden { display: none !important; }
+  #meta { max-width: 1100px; margin: 10px auto; font-size: 13px; }
+  #location, #overflow { margin: 4px 0; white-space: pre-wrap; }
+  /* AUCUN transform: scale() sur le texte (D1 interdit) — transition
+     d'entrée de page uniquement sur l'opacité du conteneur (CA4). */
+  .page-enter { animation: pagefade 180ms ease-out; }
+  @keyframes pagefade { from { opacity: 0.25; } to { opacity: 1; } }
+</style>
+<!-- epub.js (UMD) + JSZip via CDN, chargés avant le module applicatif -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js"></script>
+</head>
+<body>
+<h1>Spike jetable — comparaison moteurs EPUB (epub.js / foliate-js)</h1>
+
+<div id="controls">
+  <label>EPUB local : <input type="file" id="file" accept=".epub,application/epub+zip"></label>
+  <label>Moteur :
+    <select id="engine">
+      <option value="epubjs">epub.js (0.3.93)</option>
+      <option value="foliate">foliate-js (1.0.1)</option>
+    </select>
+  </label>
+  <button id="prev" type="button">← Page précédente</button>
+  <button id="next" type="button">Page suivante →</button>
+  <label>Taille police : <input type="range" id="fontsize" min="12" max="30" step="1" value="18">
+    <span id="fontsize-val">18px</span></label>
+  <label><input type="checkbox" id="theme"> Thème sombre (contenu)</label>
+  <button id="check-overflow" type="button">Vérifier débordement (CA1)</button>
+</div>
+
+<div id="viewer-wrap">
+  <div id="epubjs-container"></div>
+  <!-- foliate-view est créé dynamiquement ici -->
+</div>
+
+<div id="meta">
+  <div id="location">Initialisation… (si ce message persiste, le JS ne s'exécute pas).</div>
+  <div id="overflow"></div>
+</div>
+
+<!-- Script CLASSIQUE (pas type=module) : fonctionne aussi en file:// direct.
+     L'import ES dynamique de foliate-js via CDN reste utilisable via import(). -->
+<script src="./app.js"></script>
+</body>
+</html>

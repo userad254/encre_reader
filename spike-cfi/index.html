@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spike CFI foliate-js (U2)</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 16px; background: #f0f0f0; color: #111; }
+  h1 { font-size: 18px; margin: 0 0 12px; }
+  #controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    margin-bottom: 12px; padding: 10px; border: 1px solid #999; max-width: 1100px; }
+  button { padding: 6px 12px; cursor: pointer; }
+  /* Conteneur fixe ~700px, rendu paginé foliate (D2). */
+  #viewer-wrap { width: 700px; max-width: 96vw; height: 800px; margin: 0 auto;
+    border: 2px solid #666; background: #fff; overflow: hidden; }
+  foliate-view { width: 100%; height: 100%; display: block; }
+  #meta { max-width: 1100px; margin: 10px auto; font-size: 13px; }
+  #statut { margin: 4px 0; white-space: pre-wrap; font-weight: bold; }
+  /* Bannière persistante : les erreurs moteur en cascade réécrivent #statut,
+     donc l'alerte file:// vit ici, à l'abri des écrasements. */
+  #alerte { margin: 4px 0; white-space: pre-wrap; font-weight: bold; color: red; }
+  #liste { font-family: monospace; font-size: 12px; word-break: break-all; }
+  #liste li { margin-bottom: 6px; }
+  .etat-OK { color: green; font-weight: bold; }
+  .etat-DECALE { color: darkorange; font-weight: bold; }
+  .etat-PERDU { color: red; font-weight: bold; }
+  /* AUCUN transform: scale() (D1). */
+</style>
+</head>
+<body>
+<h1>Spike jetable — ancrage CFI foliate-js (U2 / D4 / CA6-lite)</h1>
+
+<div id="controls">
+  <label>EPUB local : <input type="file" id="file" accept=".epub,application/epub+zip"></label>
+  <button id="surligner" type="button">Surligner la sélection</button>
+  <button id="police" type="button">Changer police (<span id="taille-police">16px</span>)</button>
+  <button id="restaurer" type="button">Restaurer les highlights</button>
+  <button id="prev" type="button">←</button>
+  <button id="next" type="button">→</button>
+</div>
+
+<div id="viewer-wrap"><!-- foliate-view créé dynamiquement --></div>
+
+<div id="meta">
+  <div id="alerte"></div>
+  <div id="statut">Initialisation… (si ce message persiste, le JS ne s'exécute pas).</div>
+  <ol id="liste"></ol>
+</div>
+
+<!-- Script CLASSIQUE (pas type=module) : fonctionne en file:// comme en http://.
+     foliate-js lui-même exige http://localhost (iframes blob sandboxées). -->
+<script src="./spike.js"></script>
+</body>
+</html>
