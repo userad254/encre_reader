@@ -47,8 +47,8 @@ function sauvegarderPositionAvecAtterrissage(livreId: string, cfi: string, fract
   return sauvegarderPosition(livreId, cfi, progression, atterrissage);
 }
 
-// Crée la fenêtre avec les verrous de sécurité (traite les warnings iframe d'U2 :
-// on garde webSecurity, pas d'accès disque côté renderer, EPUB en Blob via IPC).
+// Crée la fenêtre avec les verrous de sécurité : le renderer est sandboxé,
+// sans accès disque — l'EPUB voyage en Blob via IPC, sécurité web conservée.
 function creerFenetre(): void {
   const iconPath = app.isPackaged
     ? path.join(process.resourcesPath, 'icon.png')
@@ -56,7 +56,7 @@ function creerFenetre(): void {
   fenetre = new BrowserWindow({
     width: 1200,
     height: 900,
-    title: 'Encre', // T4a : nom d'app (token APP_NAME côté renderer)
+    title: 'Encre', // Nom de l'app (même token côté renderer)
     icon: iconPath,
     backgroundColor: '#f7f4ee',
     autoHideMenuBar: true,
@@ -64,13 +64,13 @@ function creerFenetre(): void {
       preload: path.join(__dirname, '..', 'preload', 'preload.js'),
       contextIsolation: true, // Le renderer ne voit que window.api (pas require)
       nodeIntegration: false, // Pas de Node dans le renderer
-      sandbox: true, // Renderer bac-à-sable (iframes blob foliate isolées, cf. U2)
+      sandbox: true, // Renderer bac-à-sable (iframes Blob de foliate isolées)
     },
   });
   fenetre.setMenuBarVisibility(false);
-  // T7a : horloge de lecture (Phase 7) — le main est la source de vérité : la vue
+  // Horloge de lecture — le main est la source de vérité : la vue
   // lecture signale son montage/démontage, la fenêtre son focus. Pause : blur,
-  // minimiser, bibliothèque, fermeture (règle de mesure actée, DECISIONS.md).
+  // minimiser, bibliothèque, fermeture (règle de mesure, voir DECISIONS.md).
   initialiserHorloge({
     focusInitial: fenetre.isFocused(),
     diffuser: (t: TempsLectureJour) => fenetre?.webContents.send('temps:maj', t),
@@ -94,8 +94,8 @@ function creerFenetre(): void {
   }
 }
 
-// Identité-livre T3b2 (décision actée : chemin absolu normalisé — Windows : minuscule,
-// séparateurs `/`). Stable tant que le fichier ne bouge pas ; pas de hash (YAGNI).
+// Identité d'un livre : chemin absolu normalisé (Windows : minuscule,
+// séparateurs `/`). Stable tant que le fichier ne bouge pas ; pas de hash (simple et suffisant).
 function normaliserChemin(chemin: string): string {
   return chemin.toLowerCase().replace(/\\/g, '/');
 }
@@ -117,15 +117,15 @@ async function ouvrirLivre(): Promise<LivreOuvert | null> {
   const chemin = choix.filePaths[0];
   const data = lireEpub(chemin);
   const nomFichier = path.basename(chemin);
-  // T3b2 : id = chemin normalisé (une seule identité, grille et ouverture directe
-  // partagent highlights/position ; les lignes pré-T3b2 clés au nom sont orphelines).
+  // id = chemin normalisé (une seule identité : grille et ouverture directe
+  // partagent highlights et position ; les lignes anciennes clés au nom sont orphelines).
   const livreId = normaliserChemin(chemin);
   marquerOuverture(livreId);
   return { livreId, nomFichier, chemin, data };
 }
 
-// Ouvre un livre depuis la bibliothèque (T3b2 : null = entrée orpheline —
-// chemin déplacé/supprimé — la carte affiche "introuvable", C4 : pas de throw).
+// Ouvre un livre depuis la bibliothèque (null = entrée orpheline —
+// chemin déplacé/supprimé — la carte affiche "introuvable", pas d'exception).
 async function ouvrirLivreDepuisId(id: string): Promise<LivreOuvert | null> {
   const entree = chargerLivre(id, true);
   if (!entree || !fs.existsSync(entree.chemin)) return null;
@@ -134,23 +134,23 @@ async function ouvrirLivreDepuisId(id: string): Promise<LivreOuvert | null> {
   return { livreId: entree.id, nomFichier: path.basename(entree.chemin), chemin: entree.chemin, data };
 }
 
-// Rend la couleur stockée au format hex du schéma (T3e : schéma exige <hex> mais
+// Rend la couleur stockée au format hex du schéma d'export (le schéma exige <hex> mais
 // SQLite ne connaît que le jaune unique — correspondance assumée, pas de sélecteur).
 function versHexCouleur(couleur: string): string {
   if (couleur === 'yellow') return '#FFFF00';
-  return couleur; // Couleur future inconnue : valeur brute plutôt qu'invention (C3)
+  return couleur; // Couleur future inconnue : valeur brute plutôt qu'invention
 }
 
-// Nettoie un titre pour un nom de fichier Windows (T3e : dialogue "enregistrer").
+// Nettoie un titre pour un nom de fichier Windows (dialogue "enregistrer").
 function nomFichierSain(titre: string): string {
   const nettoye = titre.replace(/[<>:"/\\|?*]/g, '_').trim();
   return nettoye ? nettoye : 'notes';
 }
 
-// Exporte les notes d'un livre en Markdown (T3e : schéma figé "Export Libraryna").
+// Exporte les notes d'un livre en Markdown (format fixe « Export Libraryna »).
 // Source de vérité = SQLite (relit les annotations, apparie par id) ; le regroupement
-// par chapitre vient du renderer (calculé en T3d, jamais recalculé ici, C2).
-// Le main écrit le fichier via le dialogue "enregistrer", jamais le renderer (sandbox).
+// par chapitre vient du renderer (calculé une fois côté panneau notes, jamais recalculé ici).
+// Le main écrit le fichier via le dialogue "enregistrer", jamais le renderer (sandboxé).
 async function exporterNotes(demande: DemandeExport): Promise<ResultatExport> {
   if (!fenetre) return { annule: true }; // Sans fenêtre : pas de dialogue → annulé, pas d'erreur
   const meta = chargerMetaLivre(demande.livreId);
@@ -184,8 +184,8 @@ async function exporterNotes(demande: DemandeExport): Promise<ResultatExport> {
   return { annule: false, chemin: choix.filePath };
 }
 
-// Déclare les canaux IPC de T1/T2 (position distincte des annotations, DECISIONS.md)
-// + T3b2 (bibliothèque : lister/importer/ouvrir/supprimer, identité = chemin normalisé).
+// Déclare les canaux IPC du pipeline initial (position distincte des annotations)
+// + bibliothèque (lister/importer/ouvrir/supprimer, identité = chemin normalisé).
 function declarerIpc(): void {
   ipcMain.handle('livre:ouvrir', () => ouvrirLivre());
   ipcMain.handle('annotations:charger', (_e, livreId: string) => chargerAnnotations(livreId));
@@ -208,20 +208,20 @@ function declarerIpc(): void {
   ipcMain.handle('etageres:duLivre', (_e, livreId: string) => etageresDuLivre(livreId));
   ipcMain.handle('notes:exporter', (_e, d: DemandeExport) => exporterNotes(d));
   ipcMain.handle('notes:auHasard', (_e, exclusions: number[]) => noteAuHasard(exclusions ?? []));
-  ipcMain.on('lecture:etat', (_e, actif: boolean) => signalerEtatLecture(actif === true)); // T7a : fire-and-forget, pas de réponse
-  ipcMain.handle('temps:aujourdhui', () => tempsAujourdHui()); // T7a : { jour, secondes, atteint } depuis SQLite
-  ipcMain.handle('objectifs:fixer', (_e, minutes: number) => fixerObjectif(minutes)); // T7b : stocke l'objectif (rend la valeur)
-  ipcMain.handle('objectifs:jour', () => lireObjectif()); // T7b : objectif courant (15 par défaut)
-  ipcMain.handle('temps:historique', (): JourAtteinte[] => lireHistoriqueAtteinte()); // T7b : 7 derniers jours pour le streak
-  ipcMain.handle('objectifs:fixerAnnee', (_e, nombre: number) => fixerObjectifAnnee(nombre)); // T7c : stocke l'objectif annuel (rend la valeur)
-  ipcMain.handle('objectifs:anneeStats', (): ObjectifAnneeStats => { // T7c : { annee, termines, objectif }
+  ipcMain.on('lecture:etat', (_e, actif: boolean) => signalerEtatLecture(actif === true)); // Envoi sans réponse : la vue lecture signale son état
+  ipcMain.handle('temps:aujourdhui', () => tempsAujourdHui()); // { jour, secondes, atteint } depuis SQLite
+  ipcMain.handle('objectifs:fixer', (_e, minutes: number) => fixerObjectif(minutes)); // Stocke l'objectif journalier (rend la valeur)
+  ipcMain.handle('objectifs:jour', () => lireObjectif()); // Objectif journalier courant (15 par défaut)
+  ipcMain.handle('temps:historique', (): JourAtteinte[] => lireHistoriqueAtteinte()); // Historique pour la série de jours consécutifs
+  ipcMain.handle('objectifs:fixerAnnee', (_e, nombre: number) => fixerObjectifAnnee(nombre)); // Stocke l'objectif annuel (rend la valeur)
+  ipcMain.handle('objectifs:anneeStats', (): ObjectifAnneeStats => { // { annee, termines, objectif }
     const annee = String(new Date().getFullYear());
     return { annee, termines: compterTerminesAnnee(annee), objectif: lireObjectifAnnee() };
   });
-  ipcMain.handle('stats:lecture', (): StatsLecture => lireStatsLecture()); // T8a : agrégats 365j + séries + année (AUCUNE UI)
+  ipcMain.handle('stats:lecture', (): StatsLecture => lireStatsLecture()); // Agrégats 365 jours + séries + année (calculés à la demande)
 }
 
-// Démarrage : base SQLite dans userData (elle survit à la fermeture de l'app = CA6).
+// Démarrage : base SQLite dans userData (elle survit à la fermeture de l'app).
 void app.whenReady().then(() => {
   initDb(path.join(app.getPath('userData'), 'lecteur.db'));
   declarerIpc();
@@ -236,7 +236,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
-// T7a : flush synchrone de l'horloge avant de quitter (le segment ouvert est clos, raison quit).
+// Flush synchrone de l'horloge avant de quitter (le segment ouvert est clos).
 app.on('before-quit', () => {
   flusherAvantQuitter();
 });

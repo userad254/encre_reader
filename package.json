@@ -2,7 +2,7 @@
   "name": "lecteur-epub",
   "version": "0.1.0",
   "private": true,
-  "description": "Lecteur EPUB desktop — T1 : pipeline livre→rendu→surligne→persiste→recharge (DECISIONS.md, Phase 1)",
+  "description": "Lecteur EPUB desktop — Encre (conception documentée dans DECISIONS.md)",
   "main": "dist/main/main.js",
   "scripts": {
     "postinstall": "electron-rebuild -f -w better-sqlite3",

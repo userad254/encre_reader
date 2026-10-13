@@ -24,7 +24,7 @@ const api: ApiLecteur = {
   ouvrirLivre(): Promise<LivreOuvert | null> {
     return ipcRenderer.invoke('livre:ouvrir');
   },
-  // Lit les highlights SQLite d'un livre (main) — survie fermeture/réouverture (CA6).
+  // Lit les highlights SQLite d'un livre (main) — ils survivent à la fermeture et à la réouverture.
   chargerAnnotations(livreId: string): Promise<Annotation[]> {
     return ipcRenderer.invoke('annotations:charger', livreId);
   },
@@ -32,19 +32,19 @@ const api: ApiLecteur = {
   sauvegarderAnnotation(s: SauvegardeAnnotation): Promise<Annotation> {
     return ipcRenderer.invoke('annotations:sauvegarder', s);
   },
-  // Met à jour la note d'un highlight en SQLite (main) — T3d, donnée livre.
+  // Met à jour la note d'un highlight en SQLite (main) — la note appartient au livre.
   modifierNote(id: number, note: string | null): Promise<void> {
     return ipcRenderer.invoke('annotations:modifierNote', id, note);
   },
-  // Supprime un highlight en SQLite (main) — T3d, hard delete sans corbeille.
+  // Supprime un highlight en SQLite (main) — suppression définitive, sans corbeille.
   supprimerAnnotation(id: number): Promise<void> {
     return ipcRenderer.invoke('annotations:supprimer', id);
   },
-  // Exporte les notes en Markdown via le dialogue du main (T3e : schéma figé).
+  // Exporte les notes en Markdown via le dialogue du main (format fixe, voir types partagés).
   exporterNotes(d: DemandeExport): Promise<ResultatExport> {
     return ipcRenderer.invoke('notes:exporter', d);
   },
-  // Lit la position de lecture SQLite d'un livre (main) — reprise de lecture (CA6).
+  // Lit la position de lecture SQLite d'un livre (main) — pour reprendre où on s'était arrêté.
   chargerPosition(livreId: string): Promise<PositionLivre | null> {
     return ipcRenderer.invoke('position:charger', livreId);
   },
@@ -52,7 +52,7 @@ const api: ApiLecteur = {
   sauvegarderPosition(livreId: string, cfi: string, fraction: number): Promise<PositionLivre> {
     return ipcRenderer.invoke('position:sauvegarder', livreId, cfi, fraction);
   },
-  // Liste la bibliothèque SQLite (main) — grille d'accueil T3b2.
+  // Liste la bibliothèque SQLite (main) — grille d'accueil.
   listerLivres(): Promise<LivreBiblio[]> {
     return ipcRenderer.invoke('livres:lister');
   },
@@ -64,7 +64,7 @@ const api: ApiLecteur = {
   ouvrirLivreDepuisId(id: string): Promise<LivreOuvert | null> {
     return ipcRenderer.invoke('livres:ouvrirDepuisId', id);
   },
-  // Met à jour uniquement les états déclarables T5a2.
+  // Met à jour uniquement les états déclarables (terminé / à lire : « en cours » se mesure, ne se déclare pas).
   modifierStatutLivre(id: string, statut: StatutLivre): Promise<void> {
     return ipcRenderer.invoke('livres:modifierStatut', id, statut);
   },
@@ -87,19 +87,19 @@ const api: ApiLecteur = {
   etageresDuLivre(livreId: string): Promise<number[]> {
     return ipcRenderer.invoke('etageres:duLivre', livreId);
   },
-  // Tire une note au hasard hors exclusions (main) — T4f, null si vide.
+  // Tire une note au hasard hors exclusions (main, carte « Se relire ») — null si vide.
   auHasardNotes(exclusions: number[]): Promise<NoteAuHasard | null> {
     return ipcRenderer.invoke('notes:auHasard', exclusions);
   },
-  // Signale le montage/démontage de la vue lecture (main) — T7a, fire-and-forget.
+  // Signale le montage/démontage de la vue lecture (main, horloge) — envoi sans réponse attendue.
   signalerEtatLecture(actif: boolean): void {
     ipcRenderer.send('lecture:etat', actif);
   },
-  // Lit le total du jour depuis SQLite (main) — T7a.
+  // Lit le total de lecture du jour depuis SQLite (main).
   tempsAujourdHui(): Promise<TempsLectureJour> {
     return ipcRenderer.invoke('temps:aujourdhui');
   },
-  // Push à chaque flush (main) — T7a : le renderer l'ignore, il servira en T7b.
+  // Notification poussée à chaque flush de l'horloge (main) — suivie par l'anneau et le widget d'objectif.
   surMajTemps(ecouter: (t: TempsLectureJour) => void): () => void {
     const relais = (_e: unknown, t: TempsLectureJour) => ecouter(t);
     ipcRenderer.on('temps:maj', relais);
@@ -107,27 +107,27 @@ const api: ApiLecteur = {
       ipcRenderer.removeListener('temps:maj', relais);
     };
   },
-  // Pousse l'objectif journalier au main (T7b) — rend la valeur stockée.
+  // Pousse l'objectif journalier au main — rend la valeur stockée.
   fixerObjectif(minutes: number): Promise<number> {
     return ipcRenderer.invoke('objectifs:fixer', minutes);
   },
-  // Lit l'objectif courant du main (T7b) — 15 par défaut si rien fixé.
+  // Lit l'objectif journalier courant du main — 15 par défaut si rien fixé.
   objectifJour(): Promise<number> {
     return ipcRenderer.invoke('objectifs:jour');
   },
-  // Lit les 7 derniers jours { jour, atteint } pour le streak (T7b).
+  // Lit les derniers jours { jour, atteint } pour la série de jours consécutifs.
   tempsHistorique(): Promise<JourAtteinte[]> {
     return ipcRenderer.invoke('temps:historique');
   },
-  // Pousse l'objectif annuel au main (T7c) — rend la valeur retenue.
+  // Pousse l'objectif annuel au main — rend la valeur retenue.
   fixerObjectifAnnee(nombre: number): Promise<number> {
     return ipcRenderer.invoke('objectifs:fixerAnnee', nombre);
   },
-  // Lit { annee, termines, objectif } pour la ligne annuelle du widget (T7c).
+  // Lit { annee, termines, objectif } pour la ligne annuelle du widget.
   anneeStats(): Promise<ObjectifAnneeStats> {
     return ipcRenderer.invoke('objectifs:anneeStats');
   },
-  // Lit les agrégats de statistiques (T8a) — AUCUNE UI, vérification console.
+  // Lit les agrégats de statistiques (année, séries, heatmap) — calculés à la demande.
   statsLecture(): Promise<StatsLecture> {
     return ipcRenderer.invoke('stats:lecture');
   },

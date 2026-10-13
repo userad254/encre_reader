@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { JourStatsLecture, StatsLecture } from '../shared/types';
 import { obtenirApi } from './apiClient';
 
-// T8b : vue profil (pleine vue, pas de popover). Nom local, heatmap 12 mois
-// glissants, 4 chips depuis stats:lecture. Pas de métrique pages.
+// Vue profil (pleine vue, pas de popover). Nom stocké localement, heatmap 12 mois
+// glissants, 4 chips depuis les stats agrégées. Pas de métrique « pages » (fausse en reflowable).
 
 const CLE_NOM_PROFIL = 'encre-nom-profil';
 

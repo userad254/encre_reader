@@ -1,18 +1,19 @@
 import { ajouterTempsLecture, lireTempsJour } from './db';
 import type { TempsLectureJour } from '../shared/types';
 
-// T7a : horloge de lecture, source de vérité = main (Phase 7, DECISIONS.md).
-// Compte quand la vue lecture est montée ET la fenêtre focused. Pause : blur,
-// minimiser, bibliothèque, fermeture. Pas de heartbeat renderer, pas d'idle
-// detection (YAGNI). Accumulation par segments horodatés : chaque changement
-// d'état clôt le segment courant et en ouvre un nouveau si (lecture ET focus).
+// Horloge de lecture : le process main est la source de vérité.
+// Compte quand la vue lecture est montée ET la fenêtre a le focus. Pause :
+// blur, minimiser, bibliothèque, fermeture. Pas de battement côté renderer,
+// pas de détection d'inactivité (on n'ajoute rien sans besoin réel).
+// Accumulation par segments horodatés : chaque changement d'état clôt le
+// segment courant et en ouvre un nouveau si (lecture ET focus).
 
-// T7b : objectif courant poussé par le renderer (canal objectifs:fixer).
-// 15 par défaut tant que rien n'est fixé ; utilisé tel quel au prochain flush.
+// Objectif journalier poussé par le renderer (canal objectifs:fixer).
+// 15 minutes par défaut tant que rien n'est fixé ; utilisé tel quel au prochain flush.
 export const OBJECTIF_MIN_DEFAUT = 15;
 let objectifMinCourant = OBJECTIF_MIN_DEFAUT;
 
-// T7c : objectif annuel poussé par le renderer (canal objectifs:fixerAnnee).
+// Objectif annuel poussé par le renderer (canal objectifs:fixerAnnee).
 // 3 par défaut ; le main ne fait que le retenir (le renderer le persiste).
 export const OBJECTIF_ANNEE_DEFAUT = 3;
 export const OBJECTIF_ANNEE_MIN = 1;
@@ -27,7 +28,7 @@ let fenetreFocus = true; // Fenêtre focused (focus/blur/minimize/restore)
 let debutSegment: number | null = null; // Horodatage ms du segment ouvert, null = rien ne compte
 let secondesEnAttente = 0; // Secondes closes non flushées
 let minuteurFlush: ReturnType<typeof setTimeout> | null = null;
-let diffuser: (t: TempsLectureJour) => void = () => {}; // Push temps:maj à chaque flush (widget + anneau T7b)
+let diffuser: (t: TempsLectureJour) => void = () => {}; // Envoie le total au renderer à chaque flush (anneau + widget d'objectif)
 
 // Jour local AAAA-MM-JJ (le jour calendaire de l'utilisateur, pas UTC).
 export function jourLocal(d = new Date()): string {
@@ -117,19 +118,19 @@ export function flusherAvantQuitter(): void {
   flusher();
 }
 
-// T7b : le renderer pousse l'objectif (presets) ; valeur invalide = ignorée.
+// Le renderer pousse l'objectif journalier (boutons 5/10/15/20/30/45/60) ; valeur invalide = ignorée.
 // Rend la valeur stockée (le renderer la confirme via objectifs:jour).
 export function fixerObjectif(minutes: number): number {
   if (Number.isFinite(minutes) && minutes > 0) objectifMinCourant = Math.floor(minutes);
   return objectifMinCourant;
 }
 
-// T7b : objectif courant du main (15 par défaut si rien fixé).
+// Objectif journalier courant du main (15 par défaut si rien fixé).
 export function lireObjectif(): number {
   return objectifMinCourant;
 }
 
-// T7c : le renderer pousse l'objectif annuel (stepper 1-50) ; valeur invalide
+// Le renderer pousse l'objectif annuel (compteur 1-50) ; valeur invalide
 // = ignorée. Rend la valeur retenue.
 export function fixerObjectifAnnee(nombre: number): number {
   if (Number.isFinite(nombre)) {
@@ -141,13 +142,13 @@ export function fixerObjectifAnnee(nombre: number): number {
   return objectifAnneeCourant;
 }
 
-// T7c : objectif annuel retenu (3 par défaut si rien poussé).
+// Objectif annuel retenu (3 par défaut si rien poussé).
 export function lireObjectifAnnee(): number {
   return objectifAnneeCourant;
 }
 
-// Total du jour depuis SQLite (sans l'attente non flushée : la relance reprend
-// exactement ce qui est persisté, critère T7a).
+// Total du jour depuis SQLite (sans l'attente non flushée : après une relance on
+// reprend exactement ce qui est persisté).
 export function tempsAujourdHui(): TempsLectureJour {
   const jour = jourLocal();
   const ligne = lireTempsJour(jour);

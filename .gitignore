@@ -20,6 +20,17 @@ npm-debug.log*
 *.sqlite
 *.sqlite-journal
 
+# Données utilisateur locales (base posée ici en dev, jamais committée)
+userData/
+
+# Icônes intermédiaires (scripts/build-icon.js) — seuls build/icon.png (source) et build/icon.ico sont versionnés
+build/icon-*.png
+
+# Dossiers personnels de livres EPUB de test (jamais committés)
+livres/
+epubs-test/
+*.epub
+
 # Environnements
 .env
 .env.local

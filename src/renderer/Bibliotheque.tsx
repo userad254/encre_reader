@@ -7,8 +7,8 @@ import logoUrl from './assets/logo.png';
 
 export const APP_NAME = 'Encre';
 
-// T7b : objectif journalier (presets minutes). localStorage = source du choix
-// utilisateur ; null = jamais fixé → widget "Objectifs" cliquable.
+// Objectif journalier (boutons 5/10/15/20/30/45/60). Le stockage local = source du
+// choix utilisateur ; null = jamais fixé → pastille « Objectifs » cliquable.
 const CLE_OBJECTIF_JOUR = 'encre-objectif-jour';
 const PRESETS_OBJECTIF = [5, 10, 15, 20, 30, 45, 60];
 
@@ -23,7 +23,7 @@ function lireObjectifLocal(): number | null {
   }
 }
 
-// T7c : objectif annuel (stepper 1-50). Toujours défini : défaut 3.
+// Objectif annuel (compteur 1-50). Toujours défini : défaut 3.
 const CLE_OBJECTIF_ANNEE = 'encre-objectif-annee';
 const OBJECTIF_ANNEE_DEFAUT = 3;
 const OBJECTIF_ANNEE_MIN = 1;
@@ -42,7 +42,7 @@ function lireObjectifAnneeLocal(): number {
   return OBJECTIF_ANNEE_DEFAUT;
 }
 
-// T4f "Se relire" : ids déjà montrés (anti-répétition immédiate), cap 10.
+// Carte « Se relire » : ids déjà montrés (anti-répétition immédiate), cap 10.
 const CLE_NOTES_RECENTES = 'encre-notes-recentes';
 const MAX_NOTES_RECENTES = 10;
 
@@ -72,7 +72,7 @@ interface PropsBiblio {
   surOuvrirLivre(choix: LivreOuvert, cfiCible?: string, reprendreDepuisDebut?: boolean): void;
   theme?: 'clair' | 'sombre';
   surBasculerTheme?: () => void;
-  surOuvrirProfil(): void; // T8b : entrée profil en pied de sidebar → vue pleine
+  surOuvrirProfil(): void; // Entrée profil en pied de sidebar → vue pleine
 }
 
 type ModePickerCategories =
@@ -467,7 +467,7 @@ function EtagereRang({
 }
 
 /**
- * Carte "Se relire" (T4f) : une note du corpus tirée au hasard, porte vers le livre.
+ * Carte "Se relire" : une note du corpus tirée au hasard, porte vers le livre.
  * Tirage au montage (ouverture app + retour bibliothèque). Masquée si vide.
  */
 function CarteSeRelire({ surOuvrirPassage }: { surOuvrirPassage: (note: NoteAuHasard) => void }) {
@@ -563,16 +563,16 @@ export function Bibliotheque({ surOuvrirLivre, theme = 'clair', surBasculerTheme
     }
   });
 
-  // T7b : widget objectif journalier (aucune horloge locale : tout vient du main).
+  // Widget objectif journalier (aucune horloge locale : tout vient du main).
   const [objectifFixe, setObjectifFixe] = useState<number | null>(() => lireObjectifLocal());
   const [secondesJour, setSecondesJour] = useState(0);
   const [streak, setStreak] = useState(0);
   const [popoverObjectifsOuvert, setPopoverObjectifsOuvert] = useState(false);
   const popoverObjectifsRef = useRef<HTMLDivElement | null>(null);
-  // T7c : ligne annuelle du widget (toujours définie, défaut 3).
+  // Ligne annuelle du widget (toujours définie, défaut 3).
   const [objectifAnnee, setObjectifAnnee] = useState(() => lireObjectifAnneeLocal());
   const [statsAnnee, setStatsAnnee] = useState<ObjectifAnneeStats | null>(null);
-  // T8b : nom du profil (relit localStorage à chaque montage de la vue).
+  // Nom du profil (relu depuis le stockage local à chaque montage de la vue).
   const [nomProfil] = useState(() => lireNomProfil());
 
   async function charger(): Promise<void> {
@@ -615,12 +615,12 @@ export function Bibliotheque({ surOuvrirLivre, theme = 'clair', surBasculerTheme
     void chargerEtageresUtilisateur();
   }, []);
 
-  // T7b : au montage, pousse le choix local au main (si jamais fixé), confirme
-  // l'objectif + le total persisté (relance), puis suit temps:maj en temps réel.
-  // Pas de timer local : blur = pause côté main.
-  // T7c : pousse aussi l'objectif annuel (toujours défini, défaut 3) et charge
-  // les stats annuelles (relance stable via termine_le SQLite).
-  // T8b : le streak vient de stats:lecture (serieActuelle, divergence résolue).
+  // Au montage, pousse le choix local au main (si jamais fixé), confirme
+  // l'objectif + le total persisté (relance), puis suit les notifications en temps réel.
+  // Pas de timer local : changer de fenêtre met en pause côté main.
+  // Pousse aussi l'objectif annuel (toujours défini, défaut 3) et charge
+  // les stats annuelles (relance stable via la date termine_le en SQLite).
+  // La série vient des stats agrégées (serieActuelle).
   useEffect(() => {
     let actif = true;
     void (async () => {
@@ -659,7 +659,7 @@ export function Bibliotheque({ surOuvrirLivre, theme = 'clair', surBasculerTheme
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // T7b : le popover se ferme au clic extérieur.
+  // Le popover se ferme au clic extérieur.
   useEffect(() => {
     if (!popoverObjectifsOuvert) return;
     const fermer = (e: MouseEvent) => {
@@ -686,7 +686,7 @@ export function Bibliotheque({ surOuvrirLivre, theme = 'clair', surBasculerTheme
     }
   }
 
-  // T7c : relit { annee, termines, objectif } (montage + après changement de statut).
+  // Relit { annee, termines, objectif } (montage + après changement de statut).
   async function rafraichirAnnee(): Promise<void> {
     try {
       setStatsAnnee(await api.anneeStats());
@@ -695,7 +695,7 @@ export function Bibliotheque({ surOuvrirLivre, theme = 'clair', surBasculerTheme
     }
   }
 
-  // T7c : stepper annuel 1-50 → localStorage + push main + refetch stats.
+  // Compteur annuel 1-50 → stockage local + envoi au main + relecture des stats.
   async function choisirObjectifAnnee(delta: -1 | 1): Promise<void> {
     const suivant = Math.min(OBJECTIF_ANNEE_MAX, Math.max(OBJECTIF_ANNEE_MIN, objectifAnnee + delta));
     setObjectifAnnee(suivant);
@@ -782,7 +782,7 @@ export function Bibliotheque({ surOuvrirLivre, theme = 'clair', surBasculerTheme
     }
   }
 
-  // T4f : même flux que ouvrir(), mais le CFI de la note prime sur la position
+  // Même flux que ouvrir(), mais le CFI de la note prime sur la position
   // sauvegardée pour cette ouverture (priorité gérée côté Lecteur via cfiCible).
   async function ouvrirPassage(note: NoteAuHasard): Promise<void> {
     try {
@@ -822,7 +822,7 @@ export function Bibliotheque({ surOuvrirLivre, theme = 'clair', surBasculerTheme
   async function modifierStatut(id: string, statutLivre: StatutLivre): Promise<void> {
     await api.modifierStatutLivre(id, statutLivre);
     await charger();
-    await rafraichirAnnee(); // T7c : la ligne annuelle suit immédiatement (termine_le daté/annulé)
+    await rafraichirAnnee(); // La ligne annuelle suit immédiatement (date posée/annulée)
   }
 
   async function supprimerCategorie(etagere: EtagereUtilisateur): Promise<void> {
@@ -1038,7 +1038,7 @@ export function Bibliotheque({ surOuvrirLivre, theme = 'clair', surBasculerTheme
               </div>
             )}
 
-              {/* T8b : entrée profil (à la place de « Lecteur / Édition privée ») */}
+              {/* Entrée profil en pied de sidebar */}
             <div className="encre-lecteur-profil">
               <button
                 type="button"
@@ -1114,7 +1114,7 @@ export function Bibliotheque({ surOuvrirLivre, theme = 'clair', surBasculerTheme
               <span>+ Ajouter</span>
             </button>
 
-            {/* T8c : chip objectifs en en-tête (coup d'œil, popover ré-ancrée dessous) */}
+            {/* Chip objectifs en en-tête (coup d'œil, popover ré-ancrée dessous) */}
             <div ref={popoverObjectifsRef} className="encre-chip-objectifs-ancre">
               <button
                 type="button"
@@ -1177,7 +1177,7 @@ export function Bibliotheque({ surOuvrirLivre, theme = 'clair', surBasculerTheme
                       </button>
                     ))}
                   </div>
-                  {/* T7c : stepper annuel 1-50 */}
+                  {/* Compteur annuel 1-50 */}
                   <span className="encre-label-reglage">Objectif de l’année</span>
                   <div className="encre-stepper-annee">
                     <button

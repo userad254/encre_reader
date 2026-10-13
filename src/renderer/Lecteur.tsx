@@ -3,7 +3,7 @@ import type { Annotation, LivreOuvert } from '../shared/types';
 
 export interface DemandeOuverture extends LivreOuvert {
   nonce: number;
-  cfiCible?: string; // T4f : CFI de la note "Se relire", prioritaire sur la position pour cette ouverture
+  cfiCible?: string; // CFI de la note « Se relire », prioritaire sur la position pour cette ouverture
   reprendreDepuisDebut?: boolean;
 }
 
@@ -34,7 +34,7 @@ export const CONFIG_LARGEURS = [
 
 const CLE_REGLAGES = 'encre-reglages-lecture';
 
-// T7b : objectif journalier (minutes). Source = localStorage, confirmé via IPC.
+// Objectif journalier (minutes). Source = stockage local, confirmé via IPC.
 const CLE_OBJECTIF_JOUR = 'encre-objectif-jour';
 const OBJECTIF_DEFAUT = 15;
 
@@ -139,7 +139,7 @@ export function Lecteur({
   const [modeNoteRapide, setModeNoteRapide] = useState(false);
   const [noteRapideTexte, setNoteRapideTexte] = useState('');
 
-  // T7b : anneau HUD d'objectif journalier (aucune horloge locale, tout vient du main).
+  // Anneau d'objectif journalier dans le HUD (aucune horloge locale, tout vient du main).
   const [objectifMin, setObjectifMin] = useState(() => lireObjectifLocal());
   const [secondesJour, setSecondesJour] = useState(0);
   const [anneauMasque, setAnneauMasque] = useState(false);
@@ -369,8 +369,8 @@ export function Lecteur({
     return () => ro.disconnect();
   }, [largeurIndex, colonnes]);
 
-  // T7a : signale la vue lecture au main (l'horloge compte si montée + focused).
-  // Montage = ouverture lecture, démontage = retour bibliothèque. Aucune UI.
+  // Signale la vue lecture au main (l'horloge compte quand la vue est montée + fenêtre au focus).
+  // Montage = ouverture lecture, démontage = retour bibliothèque. Aucune UI ici.
   useEffect(() => {
     window.api.signalerEtatLecture(true);
     return () => {
@@ -378,8 +378,8 @@ export function Lecteur({
     };
   }, []);
 
-  // T7b : initialise l'anneau depuis le main, puis suit temps:maj en temps réel.
-  // Pas de timer local : alt-tab/blur = pause côté main, l'anneau ne bouge pas.
+  // Initialise l'anneau depuis le main, puis suit les notifications en temps réel.
+  // Pas de timer local : changer de fenêtre met en pause côté main, l'anneau ne bouge pas.
   useEffect(() => {
     let actif = true;
     void (async () => {
@@ -399,8 +399,8 @@ export function Lecteur({
     };
   }, []);
 
-  // T7b : après atteinte, l'anneau reste 1.5s (✓) puis se masque. Nouveau jour
-  // (atteint faux) = réapparition.
+  // Après atteinte, l'anneau reste 1.5s (✓) puis se masque. Nouveau jour
+  // (non atteint) = réapparition.
   const objectifSec = objectifMin * 60;
   const objectifAtteint = objectifSec > 0 && secondesJour >= objectifSec;
   useEffect(() => {
@@ -501,7 +501,7 @@ export function Lecteur({
   async function chargerLivre(choix: LivreOuvert): Promise<void> {
     const vue = vueRef.current;
     if (!vue || !moteurRef.current) return;
-    // T4f : CFI imposé par "Se relire" (prioritaire sur la position, une seule ouverture).
+    // CFI imposé par « Se relire » (prioritaire sur la position, pour cette seule ouverture).
     const cfiImpose = (choix as DemandeOuverture).cfiCible;
     const reprendreDepuisDebut = (choix as DemandeOuverture).reprendreDepuisDebut ?? false;
 
@@ -529,7 +529,7 @@ export function Lecteur({
       const pos = await window.api.chargerPosition(choix.livreId);
       derniereFractionRef.current = pos?.fraction ?? 0;
       console.log(`[progress] loaded fraction=${derniereFractionRef.current} ${choix.livreId.slice(-8)}`);
-      // T4f : le CFI de la note prime sur la position sauvegardée (cette ouverture
+      // Le CFI de la note prime sur la position sauvegardée (cette ouverture
       // seulement ; la position SQLite n'est pas écrasée ici, le relocate la mettra à jour).
       const cible = cfiImpose ?? (reprendreDepuisDebut || pos?.termine ? undefined : pos?.cfi);
       if (cible) {
@@ -876,7 +876,7 @@ export function Lecteur({
   const groupesNotes = notesOuvert && livreId ? grouperParChapitre() : [];
   const hudEstVisible = hudForce || menuApparenceOuvert;
 
-  // T7b : anneau HUD 28px (minutes restantes, arrondi sup).
+  // Anneau 28px dans le HUD (minutes restantes, arrondi supérieur).
   const minutesRestantes = Math.max(0, Math.ceil((objectifSec - secondesJour) / 60));
   const progressionAnneau = objectifSec > 0 ? Math.min(1, secondesJour / objectifSec) : 0;
   const CIRCONFERENCE_ANNEAU = 2 * Math.PI * 12;
@@ -910,7 +910,7 @@ export function Lecteur({
         </div>
 
         <div className="encre-hud-section encre-hud-droite">
-          {/* T7b : anneau d'objectif journalier (28px, ne bloque rien, HUD inchangé) */}
+          {/* Anneau d'objectif journalier (28px, ne bloque rien, HUD inchangé) */}
           <div
             className={`encre-anneau-objectif${objectifAtteint ? ' atteint' : ''}${anneauMasque ? ' cache' : ''}`}
             title={objectifAtteint ? 'Objectif atteint' : `${minutesRestantes} min restantes (objectif ${objectifMin} min)`}

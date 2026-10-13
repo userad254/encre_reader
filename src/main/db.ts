@@ -1,18 +1,19 @@
 import Database from 'better-sqlite3';
 import type { Annotation, EtagereUtilisateur, JourAtteinte, JourStatsLecture, LivreBiblio, NoteAuHasard, NouveauLivre, PositionLivre, SauvegardeAnnotation, StatsLecture, StatutLivre } from '../shared/types';
 
-// Ligne brute SQLite (snake_case) : convertie en Annotation (camelCase) en sortie (C5).
+// Ligne brute SQLite (snake_case) : convertie en Annotation (camelCase) en sortie —
+// les types partagés sont définis une seule fois et importés des deux côtés.
 interface LigneAnnotation {
   id: number;
   livre_id: string;
   cfi: string;
   texte_extrait: string;
   couleur: string;
-  note: string | null; // T3d : absente des bases pré-migration → `?? null` en sortie
+  note: string | null; // Colonne ajoutée après coup : absente des bases créées avant → `?? null` en sortie
   cree_le: string;
 }
 
-// Ligne brute SQLite pour la position de lecture (D4/DECISIONS.md).
+// Ligne brute SQLite pour la position de lecture (table distincte des highlights).
 interface LignePosition {
   livre_id: string;
   cfi: string;
@@ -21,7 +22,7 @@ interface LignePosition {
   termine: number;
 }
 
-// Ligne brute SQLite pour l'horloge de lecture T7a (Phase 7, DECISIONS.md).
+// Ligne brute SQLite pour l'horloge de lecture (une ligne par jour local).
 interface LigneTemps {
   jour: string;
   secondes: number;
@@ -30,7 +31,7 @@ interface LigneTemps {
   maj_le: string | null;
 }
 
-// Ligne brute SQLite pour la bibliothèque T3b2 (identité = chemin normalisé, DECISIONS.md).
+// Ligne brute SQLite pour la bibliothèque (l'identité d'un livre est son chemin normalisé).
 interface LigneLivre {
   id: string;
   chemin: string;
@@ -43,35 +44,35 @@ interface LigneLivre {
   derniere_lecture?: string | null;
 }
 
-// Schéma SQL de T1/T2 (D4, position distincte des highlights, un seul livre, pas de bibliothèque).
+// Schéma SQL initial (surlignage + position : la position de lecture vit dans une table distincte des highlights).
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS annotations (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  livre_id TEXT NOT NULL,      -- D4 : le highlight appartient à un livre (T1 = nom du fichier)
-  cfi TEXT NOT NULL,           -- D4 : ancre CFI, jamais offset écran ni position
-  texte_extrait TEXT NOT NULL, -- D4 : garde-fou si le CFI ne résout plus
-  couleur TEXT NOT NULL DEFAULT 'yellow', -- T1 : une seule couleur (C4)
-  note TEXT,                         -- T3d : note libre (null = vide), donnée livre
+  livre_id TEXT NOT NULL,      -- le highlight appartient à un livre (au début : simple nom du fichier)
+  cfi TEXT NOT NULL,           -- ancre CFI : position logique dans le livre, jamais un offset écran
+  texte_extrait TEXT NOT NULL, -- texte recopié au surlignage, garde-fou si le CFI ne résout plus
+  couleur TEXT NOT NULL DEFAULT 'yellow', -- une seule couleur jaune (pas de sélecteur sans besoin réel)
+  note TEXT,                         -- note libre attachée au highlight (null = vide)
   cree_le TEXT NOT NULL         -- ISO8601
 );
 CREATE INDEX IF NOT EXISTS idx_annotations_livre ON annotations(livre_id);
 
 CREATE TABLE IF NOT EXISTS position (
   livre_id TEXT PRIMARY KEY,   -- un seul enregistrement de position par livre
-  cfi TEXT NOT NULL,           -- D4 : ancre CFI de reprise de lecture
+  cfi TEXT NOT NULL,           -- ancre CFI de reprise de lecture
   maj_le TEXT NOT NULL         -- ISO8601
 );
 
 CREATE TABLE IF NOT EXISTS livres (
-  id TEXT PRIMARY KEY,         -- T3b2 : chemin absolu normalisé (identité-livre actée)
-  chemin TEXT NOT NULL UNIQUE, -- T3b2 : chemin absolu d'origine (lecture disque)
-  titre TEXT NOT NULL,         -- T3b2 : book.metadata foliate (D5, jamais parsé maison)
-  auteur TEXT,                 -- T3b2 : premier auteur foliate, null si inconnu
-  couverture BLOB,             -- T3b2 : image de book.getCover() foliate (D5), null = placeholder
+  id TEXT PRIMARY KEY,         -- chemin absolu normalisé (identité du livre)
+  chemin TEXT NOT NULL UNIQUE, -- chemin absolu d'origine (lecture disque)
+  titre TEXT NOT NULL,         -- titre via les métadonnées foliate, jamais parsé à la main
+  auteur TEXT,                 -- premier auteur foliate, null si inconnu
+  couverture BLOB,             -- image via book.getCover() foliate, null = placeholder
   ajoute_le TEXT NOT NULL,     -- ISO8601
-  progress REAL DEFAULT 0,     -- T5a1 : fraction foliate
-  termine INTEGER DEFAULT 0,   -- T5a1 : terminé automatiquement à 98 %
-  termine_le TEXT              -- T7c : ISO8601 de la transition 0→1 (NULL = jamais ou 1→0)
+  progress REAL DEFAULT 0,     -- fraction lue (0 = début, 1 = fin)
+  termine INTEGER DEFAULT 0,   -- terminé automatiquement à 98 % de progression
+  termine_le TEXT              -- date ISO8601 du passage à terminé (NULL = jamais ou remis à lire)
 );
 `;
 
@@ -88,12 +89,12 @@ CREATE TABLE IF NOT EXISTS livre_etagere (
 );
 `;
 
-// Horloge de lecture T7a (Phase 7, DECISIONS.md : une ligne par jour local).
+// Horloge de lecture : une ligne par jour local.
 const SCHEMA_TEMPS = `
 CREATE TABLE IF NOT EXISTS temps_lecture (
   jour TEXT PRIMARY KEY,              -- AAAA-MM-JJ en heure locale
   secondes INTEGER NOT NULL,          -- total accumulé du jour
-  objectif_min INTEGER NOT NULL DEFAULT 15, -- T7a : 15 en dur (presets UI en T7b)
+  objectif_min INTEGER NOT NULL DEFAULT 15, -- 15 minutes par défaut (l'interface propose 5/10/15/20/30/45/60)
   atteint INTEGER NOT NULL DEFAULT 0, -- recalculé à chaque flush (secondes >= objectif)
   maj_le TEXT                         -- ISO8601 du dernier flush
 );
@@ -107,14 +108,15 @@ export function initDb(chemin: string): void {
   base.exec(SCHEMA);
   base.exec(SCHEMA_ETAGERES);
   base.exec(SCHEMA_TEMPS);
-  migrerNotes(); // T3d : bases existantes sans la colonne note
-  migrerProgression(); // T5a1 : bases existantes sans les colonnes de mesure
-  migrerTermineLe(); // T7c : bases existantes sans la colonne de datation
-  migrerTempsLecture(); // T7a : bases existantes sans la table ou avec une table incomplète
+  migrerNotes(); // bases existantes sans la colonne note
+  migrerProgression(); // bases existantes sans les colonnes de mesure
+  migrerTermineLe(); // bases existantes sans la colonne de datation
+  migrerTempsLecture(); // bases existantes sans la table ou avec une table incomplète
 }
 
-// Migre annotations vers T3d (D4 : note = donnée livre → SQLite, jamais localStorage).
-// Idempotent : lit PRAGMA table_info avant ALTER, donc sûr au redémarrage (C4 : pas de version).
+// Ajoute la colonne note (la note est une donnée du livre : elle vit en SQLite,
+// pas dans le stockage local du navigateur).
+// Idempotent : lit PRAGMA table_info avant ALTER, donc sûr au redémarrage (pas de numéro de version).
 function migrerNotes(): void {
   const colonnes = db().prepare('PRAGMA table_info(annotations)').all() as { name: string }[];
   if (!colonnes.some((c) => c.name === 'note')) {
@@ -132,16 +134,16 @@ function migrerProgression(): void {
   }
 }
 
-// Migre vers l'objectif annuel T7c. Idempotent : PRAGMA table_info avant ALTER
-// (même convention que T3d/T5a1, C4 : pas de version). Les livres déjà
-// termine=1 gardent termine_le NULL = hors compte annuel (décision actée).
+// Migre vers l'objectif annuel. Idempotent : PRAGMA table_info avant ALTER
+// (même convention que les autres migrations : pas de numéro de version). Les livres déjà
+// termine=1 gardent termine_le NULL = hors compte annuel (décision documentée dans DECISIONS.md).
 function migrerTermineLe(): void {
   const colonnes = db().prepare('PRAGMA table_info(livres)').all() as { name: string }[];
   if (!colonnes.some((c) => c.name === 'termine_le')) {
     db().exec('ALTER TABLE livres ADD COLUMN termine_le TEXT');
   }
 }
-// PRAGMA table_info avant chaque ALTER (même convention que T3d/T5a1, C4 : pas de version).
+// PRAGMA table_info avant chaque ALTER (même convention que les autres migrations : pas de numéro de version).
 function migrerTempsLecture(): void {
   const colonnes = db().prepare('PRAGMA table_info(temps_lecture)').all() as { name: string }[];
   const noms = new Set(colonnes.map((c) => c.name));
@@ -157,7 +159,7 @@ function db(): Database.Database {
   return base;
 }
 
-// Convertit une ligne SQL en type partagé (C5 : le renderer ne voit que Annotation).
+// Convertit une ligne SQL en type partagé (le renderer ne voit que Annotation).
 function versAnnotation(ligne: LigneAnnotation): Annotation {
   return {
     id: ligne.id,
@@ -165,12 +167,12 @@ function versAnnotation(ligne: LigneAnnotation): Annotation {
     cfi: ligne.cfi,
     texteExtrait: ligne.texte_extrait,
     couleur: ligne.couleur,
-    note: ligne.note ?? null, // T3d : bases pré-migration sans colonne → vide, pas d'erreur
+    note: ligne.note ?? null, // bases créées avant la colonne → vide, pas d'erreur
     creeLe: ligne.cree_le,
   };
 }
 
-// Lit tous les highlights d'un livre, dans l'ordre de création (CA6 : survie à la réouverture).
+// Lit tous les highlights d'un livre, dans l'ordre de création (relus depuis SQLite : ils survivent à la réouverture).
 export function chargerAnnotations(livreId: string): Annotation[] {
   const lignes = db()
     .prepare('SELECT * FROM annotations WHERE livre_id = ? ORDER BY id')
@@ -189,17 +191,17 @@ export function sauvegarderAnnotation(s: SauvegardeAnnotation): Annotation {
   return { id: Number(res.lastInsertRowid), livreId: s.livreId, cfi: s.cfi, texteExtrait: s.texteExtrait, couleur: s.couleur, note: s.note, creeLe };
 }
 
-// Met à jour la note d'un highlight (T3d/D4 : UPDATE SQLite, la note est une donnée livre).
+// Met à jour la note d'un highlight (la note est stockée en SQLite avec le highlight).
 export function modifierNote(id: number, note: string | null): void {
   db().prepare('UPDATE annotations SET note = ? WHERE id = ?').run(note, id);
 }
 
-// Supprime un highlight (T3d : hard DELETE, pas de corbeille — limite actée au README).
+// Supprime un highlight (suppression définitive, sans corbeille — voir README).
 export function supprimerAnnotation(id: number): void {
   db().prepare('DELETE FROM annotations WHERE id = ?').run(id);
 }
 
-// Lit la position de lecture enregistrée d'un livre (CA6 : reprise de position).
+// Lit la position de lecture enregistrée d'un livre (pour rouvrir où on s'était arrêté).
 export function chargerPosition(livreId: string): PositionLivre | null {
   const ligne = db()
     .prepare(
@@ -219,7 +221,7 @@ export function chargerPosition(livreId: string): PositionLivre | null {
   };
 }
 
-// Enregistre ou met à jour la position courante d'un livre (CA6 / D4 : UPSERT SQLite).
+// Enregistre ou met à jour la position courante d'un livre (une seule ligne par livre).
 export function sauvegarderPosition(
   livreId: string,
   cfi: string,
@@ -259,7 +261,7 @@ export function sauvegarderPosition(
   return { livreId, cfi, majLe, fraction: progression };
 }
 
-// Convertit une ligne SQL en LivreBiblio (C5 : le BLOB Buffer devient un ArrayBuffer
+// Convertit une ligne SQL en LivreBiblio (le BLOB Buffer devient un ArrayBuffer
 // neuf transférable par IPC ; `existe` est résolu par l'appelant via existsSync).
 function versLivre(ligne: LigneLivre, existe: boolean): LivreBiblio {
   const couverture = ligne.couverture ? Uint8Array.from(ligne.couverture).buffer as ArrayBuffer : null;
@@ -277,14 +279,14 @@ function versLivre(ligne: LigneLivre, existe: boolean): LivreBiblio {
   };
 }
 
-// Lit une entrée bibliothèque par son id (T3b2 : ouverture depuis la grille).
+// Lit une entrée bibliothèque par son id (ouverture depuis la grille).
 export function chargerLivre(id: string, existe: boolean): LivreBiblio | null {
   const ligne = db().prepare('SELECT * FROM livres WHERE id = ?').get(id) as LigneLivre | undefined;
   if (!ligne) return null;
   return versLivre(ligne, existe);
 }
 
-// Lit le titre/auteur d'un livre pour le frontmatter d'export (T3e : schéma figé).
+// Lit le titre/auteur d'un livre pour l'en-tête d'export (format Markdown fixe).
 // Retourne null si le livre n'est pas en bibliothèque (ouvert direct, jamais importé).
 export function chargerMetaLivre(id: string): { titre: string; auteur: string | null } | null {
   const ligne = db().prepare('SELECT titre, auteur FROM livres WHERE id = ?').get(id) as
@@ -294,7 +296,7 @@ export function chargerMetaLivre(id: string): { titre: string; auteur: string | 
   return { titre: ligne.titre, auteur: ligne.auteur };
 }
 
-// Liste la bibliothèque, imports récents d'abord (T3b2 : grille d'accueil).
+// Liste la bibliothèque, imports récents d'abord (grille d'accueil).
 export function listerLivres(existe: (chemin: string) => boolean): LivreBiblio[] {
   const lignes = db()
     .prepare(
@@ -307,8 +309,8 @@ export function listerLivres(existe: (chemin: string) => boolean): LivreBiblio[]
 }
 
 export function modifierStatutLivre(id: string, statut: StatutLivre): void {
-  // T7c : termine_le posé à la transition 0→1, NULL à 1→0. Un livre déjà
-  // termine=1 (legacy, termine_le NULL) re-marqué reste NULL (1→1, pas daté).
+  // termine_le est posé au passage à terminé, NULL au retour à lire. Un livre déjà
+  // terminé (ancien, termine_le NULL) re-marqué reste NULL (pas de re-datation).
   if (statut === 'termine') {
     db()
       .prepare(
@@ -322,7 +324,7 @@ export function modifierStatutLivre(id: string, statut: StatutLivre): void {
   db().prepare('UPDATE livres SET termine = 0, progress = 0, termine_le = NULL WHERE id = ?').run(id);
 }
 
-// T7c : livres terminés Datés de l'année (termine_le commence par AAAA).
+// Livres terminés datés de l'année (termine_le commence par AAAA).
 export function compterTerminesAnnee(annee: string): number {
   const ligne = db()
     .prepare('SELECT COUNT(*) AS n FROM livres WHERE termine_le LIKE ?')
@@ -330,8 +332,8 @@ export function compterTerminesAnnee(annee: string): number {
   return ligne?.n ?? 0;
 }
 
-// Importe un livre : titre/auteur/couverture déjà extraits via l'API foliate côté
-// renderer (D5 : foliate exige le DOM, le main persiste seulement, C3 : pas de jsdom).
+// Importe un livre : titre/auteur/couverture déjà extraits via foliate côté
+// renderer (foliate exige le DOM, le main ne fait que persister — aucun parseur ajouté côté main).
 // Ré-importer le même chemin rafraîchit les métadonnées sans perdre ajoute_le.
 export function importerLivre(id: string, n: NouveauLivre): LivreBiblio {
   const ajouteLe = new Date().toISOString();
@@ -348,8 +350,8 @@ export function importerLivre(id: string, n: NouveauLivre): LivreBiblio {
   return versLivre(ligne, true);
 }
 
-// Retire une carte de la bibliothèque (T3b2 : annotations/position gardées —
-// ré-importer le même chemin retrouve highlights et position, CA6 préservé).
+// Retire une carte de la bibliothèque (annotations et position gardées :
+// ré-importer le même chemin retrouve highlights et position).
 export function supprimerLivre(id: string): void {
   db().prepare('DELETE FROM livres WHERE id = ?').run(id);
 }
@@ -395,8 +397,8 @@ export function etageresDuLivre(livreId: string): number[] {
   return lignes.map((ligne) => ligne.etagere_id);
 }
 
-// Tire une annotation au hasard en excluant les ids déjà montrés (T4f "Se relire").
-// LEFT JOIN car lignes orphelines pré-T3b2 → repli "Inconnu", jamais null discret.
+// Tire une annotation au hasard en excluant les ids déjà montrés (carte « Se relire »).
+// LEFT JOIN car les lignes très anciennes sans entrée bibliothèque → repli "Inconnu", jamais de vide discret.
 export function noteAuHasard(exclusions: number[]): NoteAuHasard | null {
   const propres = [...new Set(exclusions.filter((n) => Number.isInteger(n)))];
   const clauseExclusion = propres.length > 0 ? `WHERE annotations.id NOT IN (${propres.map(() => '?').join(', ')})` : '';
@@ -416,7 +418,7 @@ export function noteAuHasard(exclusions: number[]): NoteAuHasard | null {
   };
 }
 
-// Convertit une ligne temps_lecture en objet (C5 : le main ne manipule que du typé).
+// Convertit une ligne temps_lecture en objet (le main ne manipule que du typé).
 function versTemps(ligne: LigneTemps): { jour: string; secondes: number; objectifMin: number; atteint: boolean } {
   return {
     jour: ligne.jour,
@@ -433,7 +435,7 @@ export function lireTempsJour(jour: string): { jour: string; secondes: number; o
 }
 
 // Ajoute un delta au jour local (UPSERT : secondes += delta, objectif_min =
-// l'objectif courant poussé par le renderer — T7b —, atteint recalculé contre
+// l'objectif courant poussé par le renderer, atteint recalculé contre
 // lui). Rend la ligne à jour.
 export function ajouterTempsLecture(
   jour: string,
@@ -461,8 +463,8 @@ export function ajouterTempsLecture(
   return versTemps(ligne);
 }
 
-// Lit les 365 jours glissants { jour, atteint } (T8b : remplace la fenêtre 7
-// jours T7b — même canal, ordre chronologique, jours sans ligne = non atteint).
+// Lit les 365 jours glissants { jour, atteint } (ordre chronologique,
+// jours sans ligne = non atteint).
 export function lireHistoriqueAtteinte(): JourAtteinte[] {
   const debut = jourLocalDecale(-364);
   const lignes = db()
@@ -477,16 +479,16 @@ export function lireHistoriqueAtteinte(): JourAtteinte[] {
   return jours;
 }
 
-// Date locale AAAA-MM-JJ décalée de deltaJours (T8a : périmètre glissant, sans
-// dépendance à temps.ts qui importe déjà ce module — pas de cycle).
+// Date locale AAAA-MM-JJ décalée de deltaJours (calculée ici plutôt que dans
+// temps.ts, qui importe déjà ce module — évite un cycle d'imports).
 function jourLocalDecale(deltaJours: number): string {
   const d = new Date();
   d.setDate(d.getDate() + deltaJours);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-// Agrégats de statistiques (T8a : requêtes directes sur les tables existantes,
-// appelables au montage d'une vue — table minuscule, aucun cache).
+// Agrégats de statistiques (requêtes directes sur les tables existantes,
+// recalculés à chaque appel — table minuscule, aucun cache).
 export function lireStatsLecture(): StatsLecture {
   const aujourdhui = jourLocalDecale(0);
   const annee = aujourdhui.slice(0, 4);
@@ -506,7 +508,7 @@ export function lireStatsLecture(): StatsLecture {
     jours.push({ jour, minutes: Math.floor(secondes / 60), atteint: (ligne?.atteint ?? 0) === 1 });
   }
 
-  // Série actuelle : consécutifs atteint=1 jusqu'à aujourd'hui, repli hier (règle T7b).
+  // Série actuelle : jours atteints consécutifs jusqu'à aujourd'hui (repli sur hier si aujourd'hui pas atteint).
   const atteintLe = (jour: string): boolean => parJour.get(jour)?.atteint === 1;
   let curseur = atteintLe(aujourdhui) ? aujourdhui : jourLocalDecale(-1);
   let serieActuelle = 0;
@@ -547,7 +549,7 @@ export function lireStatsLecture(): StatsLecture {
     )
     .get(`${annee}%`) as { s: number; n: number } | undefined;
 
-  // Bibliothèque : terminés datés de l'année (même source que T7c) + total (legacy inclus).
+  // Bibliothèque : terminés datés de l'année (même source que l'objectif annuel) + total (anciens inclus).
   const total = db()
     .prepare('SELECT COUNT(*) AS n FROM livres WHERE COALESCE(termine, 0) = 1')
     .get() as { n: number } | undefined;

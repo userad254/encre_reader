@@ -1957,7 +1957,7 @@ foliate-view {
   opacity: 0.85;
 }
 
-/* T4g — Épigraphe fixe en tête de la colonne principale */
+/* Épigraphe fixe en tête de la colonne principale (citation du jour, hauteur bloquée) */
 .encre-bouton {
   display: inline-flex;
   align-items: center;
@@ -2123,7 +2123,7 @@ foliate-view {
 }
 
 /* ==========================================================================
-   T7b — Objectifs journaliers (anneau HUD + widget sidebar + popover)
+   Objectifs journaliers (anneau HUD + widget + popover)
    ========================================================================== */
 
 /* Anneau HUD 28px : à côté d'Apparence, ne bloque rien (HUD au survol intact) */
@@ -2172,7 +2172,7 @@ foliate-view {
   visibility: hidden;
 }
 
-/* Anneau réutilisé (widget sidebar T7b, chip en-tête T8c) */
+/* Anneau réutilisé (widget + chip d'en-tête) */
 .encre-objectifs-anneau .encre-anneau-fond {
   stroke: var(--encre-bordure);
 }
@@ -2184,7 +2184,7 @@ foliate-view {
   transform-origin: center;
 }
 
-/* Popover objectifs (T8c : ancrée sous la chip d'en-tête) */
+/* Popover objectifs (ancrée sous la chip d'en-tête) */
 .encre-popover-objectifs {
   position: absolute;
   bottom: calc(100% + 8px);
@@ -2202,7 +2202,7 @@ foliate-view {
   animation: encreApparition 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* T7c(0) : 7 chips compactes sur une rangée (fini le 5+2 à trous) */
+/* 7 pastilles compactes sur une rangée (grille resserrée, sans trou) */
 .encre-objectifs-presets {
   flex-wrap: nowrap;
 }
@@ -2214,7 +2214,7 @@ foliate-view {
 }
 
 /* ==========================================================================
-   T7c — Objectif annuel (stepper popover + ligne annuelle widget)
+   Objectif annuel (compteur dans le popover + ligne annuelle du widget)
    ========================================================================== */
 
 .encre-stepper-annee {
@@ -2260,7 +2260,7 @@ foliate-view {
 }
 
 /* ==========================================================================
-   T8c — Chip objectifs en en-tête (coup d'œil + popover dessous)
+   Chip objectifs en en-tête (coup d'œil + popover dessous)
    ========================================================================== */
 
 .encre-chip-objectifs-ancre {
@@ -2333,7 +2333,7 @@ foliate-view {
 }
 
 /* ==========================================================================
-   T8b — Profil : entrée sidebar, vue pleine, heatmap, chips
+   Profil : entrée sidebar, vue pleine, heatmap, chips
    ========================================================================== */
 
 /* Entrée profil en pied de sidebar (remplace « Lecteur / Édition privée ») */

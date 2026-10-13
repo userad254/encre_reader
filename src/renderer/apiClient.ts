@@ -247,12 +247,12 @@ class FallbackWebClient implements ApiLecteur {
     }));
   }
 
-  // Pas d'Electron en prévisualisation web : pas de tirage (T4f masquée).
+  // Pas d'Electron en prévisualisation web : pas de tirage (carte « Se relire » masquée).
   async auHasardNotes(): Promise<NoteAuHasard | null> {
     return null;
   }
 
-  // Pas d'Electron en prévisualisation web : pas d'horloge (mesure T7a = main seul).
+  // Pas d'Electron en prévisualisation web : pas d'horloge (la mesure vit dans le main seul).
   signalerEtatLecture(): void {
     /* ignore */
   }
@@ -267,7 +267,7 @@ class FallbackWebClient implements ApiLecteur {
     return () => {};
   }
 
-  // Pas d'Electron en prévisualisation web : objectif local seulement (T7b).
+  // Pas d'Electron en prévisualisation web : objectif journalier local seulement.
   async fixerObjectif(minutes: number): Promise<number> {
     return Number.isFinite(minutes) && minutes > 0 ? Math.floor(minutes) : 15;
   }
@@ -276,7 +276,7 @@ class FallbackWebClient implements ApiLecteur {
     return 15;
   }
 
-  // Pas d'Electron en prévisualisation web : 365 jours glissants vides (T8b).
+  // Pas d'Electron en prévisualisation web : 365 jours glissants vides.
   async tempsHistorique(): Promise<JourAtteinte[]> {
     const jours: JourAtteinte[] = [];
     const base = new Date();
@@ -290,7 +290,7 @@ class FallbackWebClient implements ApiLecteur {
     return jours;
   }
 
-  // Pas d'Electron en prévisualisation web : objectif annuel local seulement (T7c).
+  // Pas d'Electron en prévisualisation web : objectif annuel local seulement.
   async fixerObjectifAnnee(nombre: number): Promise<number> {
     if (!Number.isFinite(nombre)) return 3;
     return Math.min(50, Math.max(1, Math.floor(nombre)));
@@ -300,7 +300,7 @@ class FallbackWebClient implements ApiLecteur {
     return { annee: String(new Date().getFullYear()), termines: 0, objectif: 3 };
   }
 
-  // Pas d'Electron en prévisualisation web : squelette 365 jours à zéro (T8a).
+  // Pas d'Electron en prévisualisation web : squelette 365 jours à zéro.
   async statsLecture(): Promise<StatsLecture> {
     const jours: JourStatsLecture[] = [];
     const base = new Date();
